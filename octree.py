@@ -41,6 +41,10 @@ class Node:
     ---------------------    Rys. 2. Dolna część sześcianu
     """
 
+    def __str__(self):
+        """Reprezentacja pojedynczego węzła jako jego punkt początkowy; debug only."""
+        return "({}, {}, {})".format(self.x, self.y, self.z)
+
     def split(self):
         """Podziel węzeł na osiem"""
         self.is_leaf = False
