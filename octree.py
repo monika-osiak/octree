@@ -43,11 +43,11 @@ class Node:
     def __str__(self):
         """Reprezentacja pojedynczego węzła jako jego punkt początkowy; debug only."""
         return "({}, {}, {})\t -> {}, {}, {}".format(
-            self.x, 
-            self.y, 
-            self.z, 
-            self.get_dx(), 
-            self.get_dy(), 
+            self.x,
+            self.y,
+            self.z,
+            self.get_dx(),
+            self.get_dy(),
             self.get_dz())
 
     def get_dx(self):
@@ -65,66 +65,66 @@ class Node:
 
         self.branches[0] = Node(
             self.tree,
-            self.x, 
-            self.y, 
-            self.z, 
-            self.level+1
+            self.x,
+            self.y,
+            self.z,
+            self.level + 1
         )
 
         self.branches[1] = Node(
             self.tree,
-            self.x + self.get_dx()/2, 
-            self.y, 
-            self.z, 
-            self.level+1
+            self.x + self.get_dx() / 2,
+            self.y,
+            self.z,
+            self.level + 1
         )
 
         self.branches[2] = Node(
             self.tree,
-            self.x, 
-            self.y, 
-            self.z + self.get_dz()/2, 
-            self.level+1
+            self.x,
+            self.y,
+            self.z + self.get_dz() / 2,
+            self.level + 1
         )
 
         self.branches[3] = Node(
             self.tree,
-            self.x + self.get_dx()/2, 
-            self.y, 
-            self.z + self.get_dz()/2, 
-            self.level+1
+            self.x + self.get_dx() / 2,
+            self.y,
+            self.z + self.get_dz() / 2,
+            self.level + 1
         )
 
         self.branches[4] = Node(
             self.tree,
-            self.x, 
-            self.y + self.get_dy()/2, 
-            self.z, 
-            self.level+1
+            self.x,
+            self.y + self.get_dy() / 2,
+            self.z,
+            self.level + 1
         )
 
         self.branches[5] = Node(
             self.tree,
-            self.x + self.get_dx()/2, 
-            self.y + self.get_dy()/2, 
-            self.z, 
-            self.level+1
+            self.x + self.get_dx() / 2,
+            self.y + self.get_dy() / 2,
+            self.z,
+            self.level + 1
         )
 
         self.branches[6] = Node(
             self.tree,
-            self.x, 
-            self.y + self.get_dy()/2, 
-            self.z + self.get_dz()/2, 
-            self.level+1
+            self.x,
+            self.y + self.get_dy() / 2,
+            self.z + self.get_dz() / 2,
+            self.level + 1
         )
 
         self.branches[7] = Node(
             self.tree,
-            self.x + self.get_dx()/2, 
-            self.y + self.get_dy()/2, 
-            self.z + self.get_dz()/2, 
-            self.level+1
+            self.x + self.get_dx() / 2,
+            self.y + self.get_dy() / 2,
+            self.z + self.get_dz() / 2,
+            self.level + 1
         )
 
 
@@ -136,14 +136,14 @@ class Octree:
         self.dz = dz
         self.root = self.add_node(self, 0, 0, 0)
 
-    def add_node(self, tree, x, y, z, level=0):
+    def add_node(self, x, y, z, level=0):
         """Zwróć nowy węzeł"""
         return Node(self, x, y, z, level)
 
 
 if __name__ == "__main__":
-    oct = Octree(10, 10, 10)
-    print(oct.root)
-    oct.root.split()
-    for child in oct.root.branches:
+    octree = Octree(10, 10, 10)
+    print(octree.root)
+    octree.root.split()
+    for child in octree.root.branches:
         print(child)
