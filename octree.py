@@ -1,14 +1,13 @@
 class Node:
-    def __init__(self, x, y, z, dx, dy, dz):
-        """Zwróć nowy węzeł o początku w punktcie (x, y, z) i bokach dx, dy, dz"""
+    def __init__(self, tree, x, y, z, level=0):
+        """Zwróć nowy węzeł o początku w punkcie (x, y, z) i bokach dx, dy, dz"""
         self.x = x
         self.y = y
         self.z = z
-        self.dx = dx
-        self.dy = dy
-        self.dz = dz
+        self.level = level
         self.is_leaf = True  # kazdy węzeł na początku jest liściem
         self.branches = [None] * 8
+        self.tree = tree
 
         """
     Numeracja gałęzi wynika z ponizszego podziału.
@@ -43,97 +42,108 @@ class Node:
 
     def __str__(self):
         """Reprezentacja pojedynczego węzła jako jego punkt początkowy; debug only."""
-        return "({}, {}, {})\t -> {}, {}, {}".format(self.x, self.y, self.z, self.dx, self.dy, self.dz)
+        return "({}, {}, {})\t -> {}, {}, {}".format(
+            self.x, 
+            self.y, 
+            self.z, 
+            self.get_dx(), 
+            self.get_dy(), 
+            self.get_dz())
+
+    def get_dx(self):
+        return self.tree.dx / (2 ** self.level)
+
+    def get_dy(self):
+        return self.tree.dy / (2 ** self.level)
+
+    def get_dz(self):
+        return self.tree.dz / (2 ** self.level)
 
     def split(self):
         """Podziel węzeł na osiem"""
         self.is_leaf = False
 
         self.branches[0] = Node(
+            self.tree,
             self.x, 
             self.y, 
             self.z, 
-            self.dx/2, 
-            self.dy/2, 
-            self.dz/2
+            self.level+1
         )
 
         self.branches[1] = Node(
-            self.x + self.dx/2, 
+            self.tree,
+            self.x + self.get_dx()/2, 
             self.y, 
             self.z, 
-            self.dx/2, 
-            self.dy/2, 
-            self.dz/2
+            self.level+1
         )
 
         self.branches[2] = Node(
+            self.tree,
             self.x, 
             self.y, 
-            self.z + self.dz/2, 
-            self.dx/2, 
-            self.dy/2, 
-            self.dz/2
+            self.z + self.get_dz()/2, 
+            self.level+1
         )
 
         self.branches[3] = Node(
-            self.x + self.dx/2, 
+            self.tree,
+            self.x + self.get_dx()/2, 
             self.y, 
-            self.z + self.dz/2, 
-            self.dx/2, 
-            self.dy/2, 
-            self.dz/2
+            self.z + self.get_dz()/2, 
+            self.level+1
         )
 
         self.branches[4] = Node(
+            self.tree,
             self.x, 
-            self.y + self.dy/2, 
+            self.y + self.get_dy()/2, 
             self.z, 
-            self.dx/2, 
-            self.dy/2, 
-            self.dz/2
+            self.level+1
         )
 
         self.branches[5] = Node(
-            self.x + self.dx/2, 
-            self.y + self.dy/2, 
+            self.tree,
+            self.x + self.get_dx()/2, 
+            self.y + self.get_dy()/2, 
             self.z, 
-            self.dx/2, 
-            self.dy/2, 
-            self.dz/2
+            self.level+1
         )
 
         self.branches[6] = Node(
+            self.tree,
             self.x, 
-            self.y + self.dy/2, 
-            self.z + self.dz/2, 
-            self.dx/2, 
-            self.dy/2, 
-            self.dz/2
+            self.y + self.get_dy()/2, 
+            self.z + self.get_dz()/2, 
+            self.level+1
         )
 
         self.branches[7] = Node(
-            self.x + self.dx/2, 
-            self.y + self.dy/2, 
-            self.z + self.dz/2, 
-            self.dx/2, 
-            self.dy/2, 
-            self.dz/2
+            self.tree,
+            self.x + self.get_dx()/2, 
+            self.y + self.get_dy()/2, 
+            self.z + self.get_dz()/2, 
+            self.level+1
         )
 
 
 class Octree:
     def __init__(self, dx, dy, dz):
         """Zwróć nowe drzewo o początku w punkcie (0,0,0) i wymiarach dz, dy, dz"""
-        self.root = self.add_node(0, 0, 0, dx, dy, dz)
+        self.dx = dx
+        self.dy = dy
+        self.dz = dz
+        self.root = self.add_node(self, 0, 0, 0)
 
-    def add_node(self, x, y, z, dx, dy, dz):
+    def add_node(self, tree, x, y, z, level=0):
         """Zwróć nowy węzeł"""
-        return Node(x, y, z, dz, dy, dz)
+        return Node(self, x, y, z, level)
 
 
 if __name__ == "__main__":
     oct = Octree(10, 10, 10)
+    print(oct.root)
     oct.root.split()
     for child in oct.root.branches:
         print(child)
