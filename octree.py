@@ -43,7 +43,7 @@ class Node:
 
     def __str__(self):
         """Reprezentacja pojedynczego węzła jako jego punkt początkowy; debug only."""
-        return "({}, {}, {})".format(self.x, self.y, self.z)
+        return "({}, {}, {})\t -> {}, {}, {}".format(self.x, self.y, self.z, self.dx, self.dy, self.dz)
 
     def split(self):
         """Podziel węzeł na osiem"""
@@ -135,3 +135,5 @@ class Octree:
 if __name__ == "__main__":
     oct = Octree(10, 10, 10)
     oct.root.split()
+    for child in oct.root.branches:
+        print(child)
