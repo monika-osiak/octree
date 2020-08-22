@@ -134,16 +134,38 @@ class Octree:
         self.dx = dx
         self.dy = dy
         self.dz = dz
-        self.root = self.add_node(self, 0, 0, 0)
+        self.root = self.add_node(0, 0, 0)
 
     def add_node(self, x, y, z, level=0):
         """Zwróć nowy węzeł"""
         return Node(self, x, y, z, level)
 
 
+def print_preorder(root, i, prefix, last=True):
+    chars = {
+        'mid': '├',
+        'term': '└',
+        'skip': '│',
+        'dash': '─',
+        'point': ' ' + str(i),
+    }
+
+    if root:
+        char = chars['term'] if last else chars['mid']
+        new_prefix = (prefix + "    ") if last else (prefix + chars['skip'] + "   ")
+
+        print(prefix + char + chars['dash'] * 2 + chars['point'])
+
+        for i in range(8):
+            status = True if i == 7 else False
+            print_preorder(root.branches[i], i, new_prefix, status)
+
+
 if __name__ == "__main__":
     octree = Octree(10, 10, 10)
     print(octree.root)
     octree.root.split()
-    for child in octree.root.branches:
-        print(child)
+    octree.root.branches[2].split()
+    octree.root.branches[2].branches[4].split()
+    octree.root.branches[7].split()
+    print_preorder(octree.root, 0, "")
