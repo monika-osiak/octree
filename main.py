@@ -1,10 +1,29 @@
 import argparse
 
+from models import Node, Scene, get_grid, print_preorder
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", help="File to read from")
-    parser.add_argument("--output", help="File to save result")
+
+    # TODO: Reading from STL file
+    # parser.add_argument("--input", help="File to read from")
+
+    # TODO: saving structure to file
+    # parser.add_argument("--output", help="File to save result")
+
+    parser.add_argument("--dx")
+    parser.add_argument("--dy")
+    parser.add_argument("--dz")
+
     args = parser.parse_args()
 
-    in_file = args.input
-    out_file = args.output
+    # in_file = args.input
+    # out_file = args.output
+    dx = int(args.dx)
+    dy = int(args.dy)
+    dz = int(args.dz)
+
+    scene = Scene(dx, dy, dz)
+    octree = Node(scene, 0, 0, 0)
+    get_grid(octree, 3)
+    print_preorder(octree)
