@@ -142,7 +142,7 @@ class Octree:
         return Node(self, x, y, z, level)
 
 
-def print_preorder(root, i, prefix, last=True):
+def print_preorder(root, i=0, prefix="", last=True):
     chars = {
         'mid': '├',
         'term': '└',
@@ -161,11 +161,21 @@ def print_preorder(root, i, prefix, last=True):
             status = True if i == 7 else False
             print_preorder(root.branches[i], i, new_prefix, status)
 
+def can_be_splited(node, condition):
+    return node.get_dx() > condition and node.get_dy() > condition and node.get_dz() > condition
+
+def get_grid(root, condition):
+    if root and can_be_splited(root, condition):
+        root.split()
+
+        for child in root.branches:
+            get_grid(child, condition)
 
 if __name__ == "__main__":
-    octree = Octree(10, 10, 10)
-    octree.root.split()
-    octree.root.branches[2].split()
-    octree.root.branches[2].branches[4].split()
-    octree.root.branches[7].split()
-    print_preorder(octree.root, 0, "")
+    DX = 10
+    DY = 10
+    DZ = 10
+
+    octree = Octree(DX, DY, DZ)
+    get_grid(octree.root, 0.5)
+    print_preorder(octree.root)
