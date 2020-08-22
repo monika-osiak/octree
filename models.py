@@ -68,6 +68,9 @@ class Node:
     def get_dz(self):
         return self.scene.dz / (2 ** self.level)
 
+    def can_be_split(self, condition):
+        return self.get_dx() > condition and self.get_dy() > condition and self.get_dz() > condition
+
     def split(self):
         """Podziel węzeł na osiem"""
         self.is_leaf = False
@@ -157,13 +160,9 @@ def print_preorder(root, i=0, prefix="", last=True):
             print_preorder(root.branches[i], i, new_prefix, status)
 
 
-def can_be_split(node, condition):
-    return node.get_dx() > condition and node.get_dy() > condition and node.get_dz() > condition
-
-
 def get_grid(root, condition):
     # TODO: split if there is edge from model in the node
-    if root and can_be_split(root, condition):
+    if root and root.can_be_split(condition):
         root.split()
 
         for child in root.branches:
