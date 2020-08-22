@@ -1,6 +1,6 @@
 import argparse
 
-from models import Node, Scene, get_grid, print_preorder
+from models import Node, Scene, get_grid, print_preorder, find_point, Point
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -27,3 +27,7 @@ if __name__ == '__main__':
     octree = Node(scene, 0, 0, 0)
     get_grid(octree, 3)
     print_preorder(octree)
+    print()
+    p = Point(7, 7, 7)
+    node = find_point(octree, p)
+    print(f'Punkt {p} znajduje się w punkcie o danych {node}')

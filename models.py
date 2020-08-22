@@ -162,8 +162,20 @@ def can_be_split(node, condition):
 
 
 def get_grid(root, condition):
+    # TODO: split if there is edge from model in the node
     if root and can_be_split(root, condition):
         root.split()
 
         for child in root.branches:
             get_grid(child, condition)
+
+
+def find_point(root, point):
+    if root is None or root.is_leaf:
+        return root
+    else:
+        x = point.x > root.vertex.x + root.get_dx() / 2
+        y = point.y > root.vertex.y + root.get_dy() / 2
+        z = point.z > root.vertex.z + root.get_dz() / 2
+        i = x * 4 + y * 2 + z
+        return find_point(root.branches[i], point)
