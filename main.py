@@ -1,6 +1,7 @@
 import argparse
 
-from models import Node, Scene, get_grid, print_preorder, find_point, Point
+from models import Node, Scene, Point
+from functions import get_grid, print_preorder, find_point
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -23,6 +24,7 @@ if __name__ == '__main__':
     dy = int(args.dy)
     dz = int(args.dz)
 
+    # debug only
     scene = Scene(dx, dy, dz)
     octree = Node(scene, 0, 0, 0)
     get_grid(octree, 3)
