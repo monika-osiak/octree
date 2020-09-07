@@ -1,28 +1,15 @@
-class Point:
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-
-    def __str__(self):
-        return f'({self.x}, {self.y}, {self.z})'
-
-
-class Scene:
-    def __init__(self, dx, dy, dz):
-        self.dx = dx
-        self.dy = dy
-        self.dz = dz
-
-
 class Node:
-    def __init__(self, scene, x, y, z, level=0):
+    def __init__(self, point, dim):
         """Zwróć nowy węzeł o początku w punkcie (x, y, z) i bokach dx, dy, dz"""
-        self.vertex = Point(x, y, z)
-        self.level = level
+        self.x = point[0]
+        self.y = point[1]
+        self.z = point[2]
+        self.dx = dim[0]
+        self.dy = dim[1]
+        self.dz = dim[2]
+
         self.is_leaf = True  # kazdy węzeł na początku jest liściem
         self.branches = [None] * 8
-        self.scene = scene
 
         """
     Numeracja gałęzi wynika z ponizszego podziału.
@@ -57,84 +44,22 @@ class Node:
 
     def __str__(self):
         """Reprezentacja pojedynczego węzła jako jego punkt początkowy; debug only."""
-        return f'{self.vertex} -> {self.get_dx()}, {self.get_dy()}, {self.get_dz()}'
-
-    def get_dx(self):
-        return self.scene.dx / (2 ** self.level)
-
-    def get_dy(self):
-        return self.scene.dy / (2 ** self.level)
-
-    def get_dz(self):
-        return self.scene.dz / (2 ** self.level)
+        return f'({self.x}, {self.y}, {self.z}) -> {self.dx}, {self.dy}, {self.dz}'
 
     def can_be_split(self, condition):
-        return self.get_dx() > condition and self.get_dy() > condition and self.get_dz() > condition
+        return self.dx > condition and self.dy > condition and self.dz > condition
 
     def split(self):
         """Podziel węzeł na osiem"""
         self.is_leaf = False
 
-        self.branches[0] = Node(
-            self.scene,
-            self.vertex.x,
-            self.vertex.y,
-            self.vertex.z,
-            self.level + 1
-        )
+        dim = [self.dx / 2, self.dy / 2, self.dz / 2]
 
-        self.branches[1] = Node(
-            self.scene,
-            self.vertex.x + self.get_dx() / 2,
-            self.vertex.y,
-            self.vertex.z,
-            self.level + 1
-        )
-
-        self.branches[2] = Node(
-            self.scene,
-            self.vertex.x,
-            self.vertex.y,
-            self.vertex.z + self.get_dz() / 2,
-            self.level + 1
-        )
-
-        self.branches[3] = Node(
-            self.scene,
-            self.vertex.x + self.get_dx() / 2,
-            self.vertex.y,
-            self.vertex.z + self.get_dz() / 2,
-            self.level + 1
-        )
-
-        self.branches[4] = Node(
-            self.scene,
-            self.vertex.x,
-            self.vertex.y + self.get_dy() / 2,
-            self.vertex.z,
-            self.level + 1
-        )
-
-        self.branches[5] = Node(
-            self.scene,
-            self.vertex.x + self.get_dx() / 2,
-            self.vertex.y + self.get_dy() / 2,
-            self.vertex.z,
-            self.level + 1
-        )
-
-        self.branches[6] = Node(
-            self.scene,
-            self.vertex.x,
-            self.vertex.y + self.get_dy() / 2,
-            self.vertex.z + self.get_dz() / 2,
-            self.level + 1
-        )
-
-        self.branches[7] = Node(
-            self.scene,
-            self.vertex.x + self.get_dx() / 2,
-            self.vertex.y + self.get_dy() / 2,
-            self.vertex.z + self.get_dz() / 2,
-            self.level + 1
-        )
+        self.branches[0] = Node([self.x, self.y, self.z], dim)
+        self.branches[1] = Node([self.x + self.dx / 2, self.y, self.z], dim)
+        self.branches[2] = Node([self.x, self.y, self.z + self.dz / 2], dim)
+        self.branches[3] = Node([self.x + self.dx / 2, self.y, self.z + self.dz / 2], dim)
+        self.branches[4] = Node([self.x, self.y + self.dy / 2, self.z], dim)
+        self.branches[5] = Node([self.x + self.dx / 2, self.y + self.dy / 2, self.z], dim)
+        self.branches[6] = Node([self.x, self.y + self.dy / 2, self.z + self.dz / 2], dim)
+        self.branches[7] = Node([self.x + self.dx / 2, self.y + self.dy / 2, self.z + self.dz / 2], dim)
