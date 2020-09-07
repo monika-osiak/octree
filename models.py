@@ -63,3 +63,13 @@ class Node:
         self.branches[0b101] = Node([self.x + self.dx / 2, self.y + self.dy / 2, self.z], dim)
         self.branches[0b110] = Node([self.x, self.y + self.dy / 2, self.z + self.dz / 2], dim)
         self.branches[0b111] = Node([self.x + self.dx / 2, self.y + self.dy / 2, self.z + self.dz / 2], dim)
+
+    def find_point(self, point):
+        if self is None or self.is_leaf:
+            return self
+        else:
+            x = "1" if point[0] > self.x + self.dx / 2 else "0"
+            y = "1" if point[1] > self.y + self.dy / 2 else "0"
+            z = "1" if point[2] > self.z + self.dz / 2 else "0"
+            binary = "0b" + x + y + z
+            return self.branches[int(binary, 2)].find_point(point)

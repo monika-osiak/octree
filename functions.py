@@ -25,14 +25,3 @@ def get_grid(root, condition):
 
         for child in root.branches:
             get_grid(child, condition)
-
-
-def find_point(root, point):
-    if root is None or root.is_leaf:
-        return root
-    else:
-        x = "1" if point[0] > root.x + root.dx / 2 else "0"
-        y = "1" if point[1] > root.y + root.dy / 2 else "0"
-        z = "1" if point[2] > root.z + root.dz / 2 else "0"
-        binary = "0b" + x + y + z
-        return find_point(root.branches[int(binary, 2)], point)

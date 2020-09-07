@@ -1,7 +1,7 @@
 import argparse
 
 from models import Node
-from functions import get_grid, print_preorder, find_point
+from functions import get_grid, print_preorder
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -33,5 +33,5 @@ if __name__ == '__main__':
     print()
 
     point_to_check = [7, 7, 7]
-    node = find_point(octree, point_to_check)
+    node = octree.find_point(point_to_check)
     print(f'Punkt {point_to_check} znajduje się w punkcie o danych {node}')
