@@ -55,11 +55,11 @@ class Node:
 
         dim = [self.dx / 2, self.dy / 2, self.dz / 2]
 
-        self.branches[0] = Node([self.x, self.y, self.z], dim)
-        self.branches[1] = Node([self.x + self.dx / 2, self.y, self.z], dim)
-        self.branches[2] = Node([self.x, self.y, self.z + self.dz / 2], dim)
-        self.branches[3] = Node([self.x + self.dx / 2, self.y, self.z + self.dz / 2], dim)
-        self.branches[4] = Node([self.x, self.y + self.dy / 2, self.z], dim)
-        self.branches[5] = Node([self.x + self.dx / 2, self.y + self.dy / 2, self.z], dim)
-        self.branches[6] = Node([self.x, self.y + self.dy / 2, self.z + self.dz / 2], dim)
-        self.branches[7] = Node([self.x + self.dx / 2, self.y + self.dy / 2, self.z + self.dz / 2], dim)
+        self.branches[0b000] = Node([self.x, self.y, self.z], dim)
+        self.branches[0b001] = Node([self.x + self.dx / 2, self.y, self.z], dim)
+        self.branches[0b010] = Node([self.x, self.y, self.z + self.dz / 2], dim)
+        self.branches[0b011] = Node([self.x + self.dx / 2, self.y, self.z + self.dz / 2], dim)
+        self.branches[0b100] = Node([self.x, self.y + self.dy / 2, self.z], dim)
+        self.branches[0b101] = Node([self.x + self.dx / 2, self.y + self.dy / 2, self.z], dim)
+        self.branches[0b110] = Node([self.x, self.y + self.dy / 2, self.z + self.dz / 2], dim)
+        self.branches[0b111] = Node([self.x + self.dx / 2, self.y + self.dy / 2, self.z + self.dz / 2], dim)
