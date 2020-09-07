@@ -1,6 +1,6 @@
 import argparse
 
-from models import Node, Scene, Point
+from models import Node
 from functions import get_grid, print_preorder, find_point
 
 if __name__ == '__main__':
@@ -25,11 +25,13 @@ if __name__ == '__main__':
     dz = int(args.dz)
 
     # debug only
-    scene = Scene(dx, dy, dz)
-    octree = Node(scene, 0, 0, 0)
-    get_grid(octree, 3)
+    point = [0, 0, 0]
+    dim = [dx, dy, dz]
+    octree = Node(point, dim)
+    get_grid(octree, condition=3)
     print_preorder(octree)
     print()
-    p = Point(7, 7, 7)
-    node = find_point(octree, p)
-    print(f'Punkt {p} znajduje się w punkcie o danych {node}')
+
+    point_to_check = [7, 7, 7]
+    node = find_point(octree, point_to_check)
+    print(f'Punkt {point_to_check} znajduje się w punkcie o danych {node}')

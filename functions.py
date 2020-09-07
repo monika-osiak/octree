@@ -31,8 +31,8 @@ def find_point(root, point):
     if root is None or root.is_leaf:
         return root
     else:
-        x = point.x > root.vertex.x + root.get_dx() / 2
-        y = point.y > root.vertex.y + root.get_dy() / 2
-        z = point.z > root.vertex.z + root.get_dz() / 2
+        x = point[0] > root.x + root.dx / 2
+        y = point[1] > root.y + root.dy / 2
+        z = point[2] > root.z + root.dz / 2
         i = x * 4 + y * 2 + z
         return find_point(root.branches[i], point)
