@@ -1,12 +1,11 @@
 import argparse
 
-from models import Node
+from models import Node, STL
 from functions import get_grid, print_preorder, show_model
+from stl import mesh
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-
-    # TODO: Reading from STL file
     parser.add_argument("--input", help="File to read from")
 
     # TODO: saving structure to file
@@ -24,4 +23,6 @@ if __name__ == '__main__':
     dy = int(args.dy)
     dz = int(args.dz)
 
-    show_model(in_file)
+    stl = STL(in_file)
+    for triangle in stl.triangles:
+        print(triangle)
