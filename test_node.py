@@ -79,3 +79,18 @@ class TestNode:
         assert fourth_level.dx == 0.125
         assert fourth_level.dy == 0.250
         assert fourth_level.dz == 0.375
+
+    def test_get_point(self):
+        root = Node(
+            [0, 0, 0],
+            [10, 10, 10]
+        )
+        get_grid(root, condition=3)
+        point_to_check = [7, 7, 7]
+        node = root.find_point(point_to_check)
+        assert node.x == 5
+        assert node.y == 5
+        assert node.z == 5
+        assert node.dx == 2.5
+        assert node.dy == 2.5
+        assert node.dz == 2.5
