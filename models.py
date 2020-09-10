@@ -90,6 +90,7 @@ class STL:
     def __init__(self, filename):
         self.filename = filename
         self.triangles = []
+        # TODO: make class Vertex to enable creating set of vertex?
         self.get_triangles()
 
     def add_triangle(self, triangle):
