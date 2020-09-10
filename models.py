@@ -73,3 +73,54 @@ class Node:
             z = "1" if point[2] > self.z + self.dz / 2 else "0"
             binary = "0b" + x + y + z
             return self.branches[int(binary, 2)].find_point(point)
+
+
+class STLTriangle:
+    def __init__(self, v1, v2, v3, normal):
+        self.v1 = v1
+        self.v2 = v2
+        self.v3 = v3
+        self.normal = normal
+
+    def __str__(self):
+        return f"({self.v1}),\t({self.v2}),\t({self.v3})\tN = {self.normal}"
+
+
+class STL:
+    def __init__(self, filename):
+        self.filename = filename
+        self.triangles = []
+        self.get_triangles()
+
+    def add_triangle(self, triangle):
+        self.triangles.append(triangle)
+
+    def parse_file(self):
+        normal_array = []
+        vertex_array = []
+
+        with open(self.filename) as file:
+            for line in file.readlines():
+                if "normal" in line:
+                    s = line.split()
+                    normal_array.append([s[2], s[3], s[4]])
+                if "vertex" in line:
+                    s = line.split()
+                    vertex_array.append([s[1], s[2], s[3]])
+
+        assert len(normal_array) * 3 == len(vertex_array)
+
+        return normal_array, vertex_array
+
+    def get_triangles(self):
+        normal_array, vertex_array = self.parse_file()
+
+        for i, normal in enumerate(normal_array):
+            triangle = STLTriangle(
+                vertex_array[3 * i],
+                vertex_array[3 * i + 1],
+                vertex_array[3 * i + 2],
+                normal
+            )
+
+            self.triangles.append(triangle)
