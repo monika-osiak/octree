@@ -47,7 +47,7 @@ class Node:
         return f'({self.x}, {self.y}, {self.z}) -> {self.dx}, {self.dy}, {self.dz}'
 
     def can_be_split(self, condition):
-        return self.dx > condition and self.dy > condition and self.dz > condition
+        return (self.dx / 2) * (self.dy / 2) * (self.dz / 2) >= condition
 
     def split(self):
         """Podziel węzeł na osiem"""
