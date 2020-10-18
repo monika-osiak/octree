@@ -15,8 +15,30 @@ class Node:
         """Reprezentacja pojedynczego węzła jako jego punkt początkowy; debug only."""
         return f'({self.x}, {self.y}, {self.z}) -> {self.dx}, {self.dy}, {self.dz}'
 
-    def can_be_split(self, condition):
-        return (self.dx / 2) * (self.dy / 2) * (self.dz / 2) >= condition
+    def can_be_split(self, condition, object):
+        return (self.dx / 2) * (self.dy / 2) * (self.dz / 2) >= condition and self.check_object(object)
+
+    def vertex_in_node(self, vertex):
+        x = self.x <= vertex.x <= self.x + self.dx
+        y = self.y <= vertex.y <= self.y + self.dy
+        z = self.z <= vertex.z <= self.z + self.dz
+        return x and y and z
+
+    def check_object(self, object):
+        if object is None:
+            return True  # debug only - in this case there is no stl object to compare
+
+        # TODO: splitting if there is object in the node
+        # case 1: vertex
+        for v in object.vertices:
+            if self.vertex_in_node(v):
+                return True
+
+        # case 2: edge
+
+        # case 3: triangle
+
+        return True  # TODO: change to False when done
 
     def split(self):
         """Podziel węzeł na osiem"""

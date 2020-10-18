@@ -23,9 +23,8 @@ def print_preorder(root, i=0, prefix="", last=True):
             print_preorder(root.branches[i], i, new_prefix, status)
 
 
-def get_grid(root, condition):
-    # TODO: split if there is edge from model in the node
-    if root and root.can_be_split(condition):
+def get_grid(root, condition, object=None):
+    if root and root.can_be_split(condition, object):
         root.split()
 
         for child in root.branches:
@@ -47,3 +46,5 @@ def show_model(filename):
 
     # Show the plot to the screen
     pyplot.show()
+
+# TODO: add function to plot octree in 3D
