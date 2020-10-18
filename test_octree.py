@@ -3,7 +3,7 @@ from models import Node
 from functions import get_grid, print_preorder
 
 
-class TestNode:
+class TestOctree:
     def test_create_root(self):
         root = Node(
             [0, 0, 0],
