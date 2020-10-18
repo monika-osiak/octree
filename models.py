@@ -75,26 +75,23 @@ class Node:
             return self.branches[int(binary, 2)].find_point(point)
 
 
-class STLTriangle:
+class Triangle:
     def __init__(self, v1, v2, v3, normal):
+        # each triangle has three vertex and a normal
         self.v1 = v1
         self.v2 = v2
         self.v3 = v3
         self.normal = normal
 
     def __str__(self):
-        return f"({self.v1}),\t({self.v2}),\t({self.v3})\tN = {self.normal}"
+        return f"{self.v1},       {self.v2},       {self.v3}       N = {self.normal}"
 
 
 class STL:
     def __init__(self, filename):
         self.filename = filename
-        self.triangles = []
+        self.triangles = self.get_triangles()
         # TODO: make class Vertex to enable creating set of vertex?
-        self.get_triangles()
-
-    def add_triangle(self, triangle):
-        self.triangles.append(triangle)
 
     def parse_file(self):
         normal_array = []
@@ -115,13 +112,16 @@ class STL:
 
     def get_triangles(self):
         normal_array, vertex_array = self.parse_file()
+        triangles = []
 
         for i, normal in enumerate(normal_array):
-            triangle = STLTriangle(
+            triangle = Triangle(
                 vertex_array[3 * i],
                 vertex_array[3 * i + 1],
                 vertex_array[3 * i + 2],
                 normal
             )
 
-            self.triangles.append(triangle)
+            triangles.append(triangle)
+
+        return triangles
