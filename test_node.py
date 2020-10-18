@@ -61,9 +61,9 @@ class TestNode:
     def test_get_grid(self):
         root = Node(
             [0, 0, 0],
-            [1, 2, 3]
+            [1, 2, 4]
         )
-        get_grid(root, condition=0.2)
+        get_grid(root, condition=0.12)
         print_preorder(root)
 
         assert root.is_leaf is False
@@ -72,13 +72,10 @@ class TestNode:
         assert second_level.is_leaf is False
 
         third_level = second_level.branches[1]
-        assert third_level.is_leaf is False
-
-        fourth_level = third_level.branches[1]
-        assert fourth_level.is_leaf is True
-        assert fourth_level.dx == 0.125
-        assert fourth_level.dy == 0.250
-        assert fourth_level.dz == 0.375
+        assert third_level.is_leaf is True
+        assert third_level.dx == 0.25
+        assert third_level.dy == 0.5
+        assert third_level.dz == 1
 
     def test_get_point(self):
         root = Node(
