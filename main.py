@@ -4,6 +4,27 @@ from models import Node, STL, Edge, Vertex
 from functions import get_grid, print_preorder, show_model
 from stl import mesh
 
+
+def test_octree(dx, dy, dz):
+    point = [0, 0, 0]
+    dims = [1, 2, 4]  # 1*2*4 = 8
+
+    print("TEST OCTREE")
+    root = Node(point, dims)
+    get_grid(root, condition=0.12)
+    print_preorder(root)
+
+
+def test_stl(in_file):
+    stl = STL(in_file)
+
+    print("TEST STL PARSER")
+    print(f"Filename: {in_file}")
+    print(f"Number of triangles: {len(stl.triangles)}")
+    print(f"Number of vertices: {len(stl.vertices)}")
+    print(f"Number of edges: {len(stl.edges)}")
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", help="File to read from")
@@ -23,18 +44,6 @@ if __name__ == '__main__':
     dy = int(args.dy)
     dz = int(args.dz)
 
-    stl = STL(in_file)
-
-    for triangle in stl.triangles:
-        print(triangle)
-    print(f"Triangles: {len(stl.triangles)}")
-    print()
-
-    for vertex in stl.vertex:
-        print(vertex)
-    print(f"Vertex: {len(stl.vertex)}")
-    print()
-
-    for edge in stl.edges:
-        print(edge)
-    print(f"Edges: {len(stl.edges)}")
+    test_octree(dx, dy, dz)
+    print("-------------------------")
+    test_stl(in_file)

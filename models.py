@@ -46,7 +46,7 @@ class Node:
 
 class Triangle:
     def __init__(self, v1, v2, v3, normal):
-        # each triangle has three vertex and a normal
+        # each triangle has three vertices and a normal
         self.v1 = v1  # Vertex
         self.v2 = v2  # Vertex
         self.v3 = v3  # Vertex
@@ -106,7 +106,7 @@ class STL:
         self.parse_file()
 
         self.triangles = self.get_triangles()
-        self.vertex = self.get_vertex()
+        self.vertices = self.get_vertices()
         self.edges = self.get_edges()
 
     def parse_file(self):
@@ -136,7 +136,7 @@ class STL:
 
         return triangles
 
-    def get_vertex(self):
+    def get_vertices(self):
         return set(self.vertex_array)
 
     def get_edges(self):
