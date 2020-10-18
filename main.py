@@ -1,6 +1,6 @@
 import argparse
 
-from models import Node, STL
+from models import Node, STL, Edge, Vertex
 from functions import get_grid, print_preorder, show_model
 from stl import mesh
 
@@ -24,5 +24,17 @@ if __name__ == '__main__':
     dz = int(args.dz)
 
     stl = STL(in_file)
+
     for triangle in stl.triangles:
         print(triangle)
+    print(f"Triangles: {len(stl.triangles)}")
+    print()
+
+    for vertex in stl.vertex:
+        print(vertex)
+    print(f"Vertex: {len(stl.vertex)}")
+    print()
+
+    for edge in stl.edges:
+        print(edge)
+    print(f"Edges: {len(stl.edges)}")

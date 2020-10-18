@@ -11,37 +11,6 @@ class Node:
         self.is_leaf = True  # kazdy węzeł na początku jest liściem
         self.branches = [None] * 8
 
-        """
-    Numeracja gałęzi wynika z ponizszego podziału.
-    Wartości binarne odpowiadają (x,y,z).
-    
-    Dzielimy sześcian w połowie wzdłuz płaszczyzny X:
-        Y < połowa => 0
-        w p.p. => 1
-
-    Reszta analogicznie
-
-    ---------------------
-    |         |         |
-    | 110 = 6 | 111 = 7 |
-    |         |         |
-    ---------------------
-    |         |         |
-    | 100 = 4 | 101 = 5 |
-    |         |         |
-    ---------------------    Rys. 1. Górna część sześcianu
-
-    ---------------------
-    |         |         |
-    | 010 = 2 | 011 = 3 |
-    |         |         |
-    ---------------------
-    |         |         |
-    | 000 = 0 | 001 = 1 |
-    |         |         |
-    ---------------------    Rys. 2. Dolna część sześcianu
-    """
-
     def __str__(self):
         """Reprezentacja pojedynczego węzła jako jego punkt początkowy; debug only."""
         return f'({self.x}, {self.y}, {self.z}) -> {self.dx}, {self.dy}, {self.dz}'
@@ -78,50 +47,102 @@ class Node:
 class Triangle:
     def __init__(self, v1, v2, v3, normal):
         # each triangle has three vertex and a normal
-        self.v1 = v1
-        self.v2 = v2
-        self.v3 = v3
-        self.normal = normal
+        self.v1 = v1  # Vertex
+        self.v2 = v2  # Vertex
+        self.v3 = v3  # Vertex
+        self.normal = normal  # list
 
     def __str__(self):
         return f"{self.v1},       {self.v2},       {self.v3}       N = {self.normal}"
 
 
+class Vertex:
+    def __init__(self, x, y, z):
+        self.x = x  # int
+        self.y = y  # int
+        self.z = z  # int
+
+    def __str__(self):
+        return f"({self.x}, {self.y}, {self.z})"
+
+    def __eq__(self, obj):
+        return isinstance(obj, Vertex) and obj.x == self.x and obj.y == self.y and obj.z == self.z
+
+    def __hash__(self):
+        return hash(self.x) * hash(self.y) * hash(self.z)
+
+
+def get_edges_from_triangle(triangle):
+    return [
+        Edge(triangle.v1, triangle.v2),
+        Edge(triangle.v2, triangle.v3),
+        Edge(triangle.v3, triangle.v1),
+    ]
+
+
+class Edge:
+    def __init__(self, v1, v2):
+        self.v1 = v1  # Vertex
+        self.v2 = v2  # Vertex
+
+    def __str__(self):
+        return f"{self.v1} -> {self.v2}"
+
+    def __eq__(self, obj):
+        first = obj.v1 == self.v1 and obj.v2 == self.v2
+        second = obj.v2 == self.v1 and obj.v1 == self.v2
+        return (first or second) and isinstance(obj, Edge)
+
+    def __hash__(self):
+        return hash(self.v1) * hash(self.v2)
+
+
 class STL:
     def __init__(self, filename):
         self.filename = filename
+        self.normal_array = []
+        self.vertex_array = []
+
+        self.parse_file()
+
         self.triangles = self.get_triangles()
-        # TODO: make class Vertex to enable creating set of vertex?
+        self.vertex = self.get_vertex()
+        self.edges = self.get_edges()
 
     def parse_file(self):
-        normal_array = []
-        vertex_array = []
-
         with open(self.filename) as file:
             for line in file.readlines():
                 if "normal" in line:
                     s = line.split()
-                    normal_array.append([s[2], s[3], s[4]])
+                    self.normal_array.append([s[2], s[3], s[4]])
                 if "vertex" in line:
                     s = line.split()
-                    vertex_array.append([s[1], s[2], s[3]])
+                    self.vertex_array.append(Vertex(s[1], s[2], s[3]))
 
-        assert len(normal_array) * 3 == len(vertex_array)
-
-        return normal_array, vertex_array
+        assert len(self.normal_array) * 3 == len(self.vertex_array)
 
     def get_triangles(self):
-        normal_array, vertex_array = self.parse_file()
         triangles = []
 
-        for i, normal in enumerate(normal_array):
+        for i, normal in enumerate(self.normal_array):
             triangle = Triangle(
-                vertex_array[3 * i],
-                vertex_array[3 * i + 1],
-                vertex_array[3 * i + 2],
+                self.vertex_array[3 * i],
+                self.vertex_array[3 * i + 1],
+                self.vertex_array[3 * i + 2],
                 normal
             )
 
             triangles.append(triangle)
 
         return triangles
+
+    def get_vertex(self):
+        return set(self.vertex_array)
+
+    def get_edges(self):
+        edges = []
+
+        for triangle in self.triangles:
+            edges += get_edges_from_triangle(triangle)
+
+        return set(edges)
