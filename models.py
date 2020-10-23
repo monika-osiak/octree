@@ -1,3 +1,5 @@
+from tqdm import tqdm
+
 class Node:
     def __init__(self, point, dim):
         """Zwróć nowy węzeł o początku w punkcie (x, y, z) i bokach dx, dy, dz"""
@@ -151,7 +153,8 @@ class STL:
 
     def parse_file(self):
         with open(self.filename) as file:
-            for line in file.readlines():
+            print(f'> Parse {self.filename}...')
+            for line in tqdm(file.readlines()):
                 if "normal" in line:
                     s = line.split()
                     self.normal_array.append([
@@ -172,7 +175,8 @@ class STL:
     def get_triangles(self):
         triangles = []
 
-        for i, normal in enumerate(self.normal_array):
+        print('> Get triangles...')
+        for i, normal in tqdm(enumerate(self.normal_array)):
             triangle = Triangle(
                 self.vertex_array[3 * i],
                 self.vertex_array[3 * i + 1],
@@ -185,12 +189,14 @@ class STL:
         return triangles
 
     def get_vertices(self):
+        print('> Get vertices...')
         return set(self.vertex_array)
 
     def get_edges(self):
         edges = []
 
-        for triangle in self.triangles:
+        print('> Get edges...')
+        for triangle in tqdm(self.triangles):
             edges += get_edges_from_triangle(triangle)
 
         return set(edges)

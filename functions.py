@@ -2,6 +2,7 @@ from stl import mesh
 from mpl_toolkits import mplot3d
 from matplotlib import pyplot
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 def print_preorder(root, i=0, prefix="", last=True):
@@ -61,7 +62,8 @@ def draw_edge(edge, ax):
 def my_show_model(stl):
     fig = plt.figure()
     ax = plt.axes(projection='3d')
-    for edge in stl.edges:
+    print(f'> Draw {stl.filename}...')
+    for edge in tqdm(stl.edges):
         draw_edge(edge, ax)
     plt.show()
 
