@@ -51,12 +51,32 @@ def show_model(filename):
 # TODO: add function to plot octree in 3D
 
 
+def draw_edge(edge, ax):
+    xs = [edge.v1.x, edge.v2.x]
+    ys = [edge.v1.y, edge.v2.y]
+    zs = [edge.v1.z, edge.v2.z]
+    ax.plot3D(xs, ys, zs, 'gray')
+
+
 def my_show_model(stl):
     fig = plt.figure()
     ax = plt.axes(projection='3d')
     for edge in stl.edges:
-        xs = [edge.v1.x, edge.v2.x]
-        ys = [edge.v1.y, edge.v2.y]
-        zs = [edge.v1.z, edge.v2.z]
-        ax.plot3D(xs, ys, zs, 'gray')
+        draw_edge(edge, ax)
+    plt.show()
+
+
+def show_node(root, axes):
+    if root:
+        for edge in root.get_edges():
+            draw_edge(edge, axes)
+
+        for child in root.branches:
+            show_node(child, axes)
+
+
+def show_octree(root):
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+    show_node(root, ax)
     plt.show()
