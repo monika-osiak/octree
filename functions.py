@@ -1,6 +1,7 @@
 from stl import mesh
 from mpl_toolkits import mplot3d
 from matplotlib import pyplot
+import matplotlib.pyplot as plt
 
 
 def print_preorder(root, i=0, prefix="", last=True):
@@ -48,3 +49,14 @@ def show_model(filename):
     pyplot.show()
 
 # TODO: add function to plot octree in 3D
+
+
+def my_show_model(stl):
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+    for edge in stl.edges:
+        xs = [edge.v1.x, edge.v2.x]
+        ys = [edge.v1.y, edge.v2.y]
+        zs = [edge.v1.z, edge.v2.z]
+        ax.plot3D(xs, ys, zs, 'gray')
+    plt.show()
