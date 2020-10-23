@@ -36,7 +36,7 @@ class Node:
         return result
 
     def can_be_split(self, condition, object):
-        return (self.dx / 2) * (self.dy / 2) * (self.dz / 2) >= condition and self.check_object(object)
+        return ((self.dx / 2) * (self.dy / 2) * (self.dz / 2) >= condition) and (self.check_object(object))
 
     def vertex_in_node(self, vertex):
         x = self.x <= vertex.x <= self.x + self.dx
@@ -58,7 +58,7 @@ class Node:
 
         # case 3: triangle
 
-        return True  # TODO: change to False when done
+        return False  # TODO: change to False when done
 
     def split(self):
         """Podziel węzeł na osiem"""
