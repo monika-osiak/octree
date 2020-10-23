@@ -1,7 +1,7 @@
 import argparse
 
 from models import Node, STL, Edge, Vertex
-from functions import get_grid, print_preorder, show_model
+from functions import get_grid, print_preorder, show_model, my_show_model
 from stl import mesh
 
 
@@ -44,6 +44,8 @@ if __name__ == '__main__':
     dy = int(args.dy)
     dz = int(args.dz)
 
-    test_octree(dx, dy, dz)
-    print("-------------------------")
-    test_stl(in_file)
+    # test_octree(dx, dy, dz)
+    # print("-------------------------")
+    # test_stl(in_file)
+    stl = STL(in_file)
+    my_show_model(stl)
