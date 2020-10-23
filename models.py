@@ -136,10 +136,18 @@ class STL:
             for line in file.readlines():
                 if "normal" in line:
                     s = line.split()
-                    self.normal_array.append([s[2], s[3], s[4]])
+                    self.normal_array.append([
+                        float(s[2]),
+                        float(s[3]),
+                        float(s[4])
+                    ])
                 if "vertex" in line:
                     s = line.split()
-                    self.vertex_array.append(Vertex(s[1], s[2], s[3]))
+                    self.vertex_array.append(Vertex(
+                        float(s[1]),
+                        float(s[2]),
+                        float(s[3])
+                    ))
 
         assert len(self.normal_array) * 3 == len(self.vertex_array)
 
