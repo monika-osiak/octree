@@ -30,7 +30,7 @@ def get_grid(root, condition, object=None):
         root.split()
 
         for child in root.branches:
-            get_grid(child, condition)
+            get_grid(child, condition, object)
 
 
 def show_model(filename):
