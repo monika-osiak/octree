@@ -1,7 +1,7 @@
 import argparse
 
 from models import Node, STL, Edge, Vertex
-from functions import get_grid, print_preorder, show_model, my_show_model
+from functions import get_grid, print_preorder, show_model, my_show_model, show_octree
 from stl import mesh
 
 
@@ -11,8 +11,10 @@ def test_octree(dx, dy, dz):
 
     print("TEST OCTREE")
     root = Node(point, dims)
+    root.split()
+    root.branches[2].split()
     get_grid(root, condition=0.12)
-    print_preorder(root)
+    show_octree(root)
 
 
 def test_stl(in_file):
@@ -44,8 +46,6 @@ if __name__ == '__main__':
     dy = int(args.dy)
     dz = int(args.dz)
 
-    # test_octree(dx, dy, dz)
+    test_octree(dx, dy, dz)
     # print("-------------------------")
     # test_stl(in_file)
-    stl = STL(in_file)
-    my_show_model(stl)
