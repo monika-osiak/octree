@@ -15,6 +15,24 @@ class Node:
         """Reprezentacja pojedynczego węzła jako jego punkt początkowy; debug only."""
         return f'({self.x}, {self.y}, {self.z}) -> {self.dx}, {self.dy}, {self.dz}'
 
+    def get_edges(self):
+        v1 = Vertex(self.x, self.y, self.z)
+        v2 = Vertex(self.x + self.dx, self.y, self.z)
+        v3 = Vertex(self.x, self.y, self.z + self.dz)
+        v4 = Vertex(self.x + self.dx, self.y, self.z + self.dz)
+        v5 = Vertex(self.x, self.y + self.dy, self.z)
+        v6 = Vertex(self.x + self.dx, self.y + self.dy, self.z)
+        v7 = Vertex(self.x, self.y + self.dy, self.z + self.dz)
+        v8 = Vertex(self.x + self.dx, self.y + self.dy, self.z + self.dz)
+
+        result = [
+            Edge(v1, v2), Edge(v2, v4), Edge(v4, v3), Edge(v3, v1),
+            Edge(v1, v5), Edge(v2, v6), Edge(v4, v8), Edge(v3, v7),
+            Edge(v5, v6), Edge(v6, v8), Edge(v8, v7), Edge(v7, v5)
+        ]
+
+        return result
+
     def can_be_split(self, condition, object):
         return (self.dx / 2) * (self.dy / 2) * (self.dz / 2) >= condition and self.check_object(object)
 
