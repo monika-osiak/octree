@@ -193,14 +193,6 @@ class NodeWall:
         return dot_product(self.v1, p)
 
 
-def get_edges_from_triangle(triangle):
-    return [
-        Edge(triangle.v1, triangle.v2),
-        Edge(triangle.v2, triangle.v3),
-        Edge(triangle.v3, triangle.v1),
-    ]
-
-
 class Point:
     def __init__(self, x, y, z):
         self.x = x  # int
