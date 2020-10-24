@@ -43,28 +43,28 @@ class Node:
                 self.vertices[0]
             ),
             NodeWall(
-                Vector(self.vertices[5], self.vertices[1]),
                 Vector(self.vertices[3], self.vertices[1]),
+                Vector(self.vertices[5], self.vertices[1]),
                 self.vertices[1]
             ),
             NodeWall(
-                Vector(self.vertices[7], self.vertices[3]),
                 Vector(self.vertices[2], self.vertices[3]),
+                Vector(self.vertices[7], self.vertices[3]),
                 self.vertices[3]
             ),
             NodeWall(
-                Vector(self.vertices[6], self.vertices[2]),
                 Vector(self.vertices[0], self.vertices[2]),
+                Vector(self.vertices[6], self.vertices[2]),
                 self.vertices[2]
             ),
             NodeWall(
-                Vector(self.vertices[4], self.vertices[0]),
                 Vector(self.vertices[1], self.vertices[0]),
+                Vector(self.vertices[4], self.vertices[0]),
                 self.vertices[0]
             ),
             NodeWall(
-                Vector(self.vertices[6], self.vertices[4]),
                 Vector(self.vertices[5], self.vertices[4]),
+                Vector(self.vertices[6], self.vertices[4]),
                 self.vertices[4]
             )
         ]
@@ -80,9 +80,21 @@ class Node:
         return (self.dim.x / 2) * (self.dim.y / 2) * (self.dim.z / 2) >= condition and self.check_object(object)
 
     def point_in_node(self, point):
-        x = self.start.x <= point.x <= self.start.x + self.dim.x
-        y = self.start.y <= point.y <= self.start.y + self.dim.y
-        z = self.start.z <= point.z <= self.start.z + self.dim.z
+        if self.start.x < self.vertices[-1].x:
+            x = self.start.x <= point.x <= self.vertices[-1].x
+        else:
+            x = self.vertices[-1].x <= point.x <= self.start.x
+
+        if self.start.y < self.vertices[-1].y:
+            y = self.start.y <= point.y <= self.vertices[-1].y
+        else:
+            y = self.vertices[-1].y <= point.y <= self.start.y
+
+        if self.start.z < self.vertices[-1].z:
+            z = self.start.z <= point.z <= self.vertices[-1].z
+        else:
+            z = self.vertices[-1].z <= point.z <= self.start.z
+
         return x and y and z
 
     def check_object(self, object):
@@ -99,15 +111,14 @@ class Node:
         for edge in object.edges:
             for wall in self.walls:
                 check_a = dot_product(wall.n, edge.a) + wall.d
+                if check_a == 0 and self.point_in_node(edge.a):
+                    return True
+
                 check_b = dot_product(wall.n, edge.b) + wall.d
-                if check_a == 0:
-                    if self.point_in_node(edge.a):
-                        return True
-                if check_b == 0:
-                    if self.point_in_node(edge.b):
-                        return True
+                if check_b == 0 and self.point_in_node(edge.b):
+                    return True
+
                 if check_a * check_b < 0:
-                    # print("Checking...")
                     w = (dot_product(wall.n, edge.b) + wall.d) / dot_product(wall.n, edge.vector)
                     new_point = Point(
                         edge.b.x - edge.vector.x * w,
@@ -115,7 +126,6 @@ class Node:
                         edge.b.z - edge.vector.z * w,
                     )
                     if self.point_in_node(new_point):
-                        # print("True")
                         return True
 
         # case 3: triangle
@@ -190,7 +200,7 @@ class NodeWall:
         )
 
     def get_d(self, p):
-        return dot_product(self.v1, p)
+        return (-1) * dot_product(self.n, p)
 
 
 class Point:
