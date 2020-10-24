@@ -1,13 +1,12 @@
 import argparse
 
-from models import Node
-from stl_models import STL
+from models import Node, STL, Point, Vector
 from functions import *
 
 
 def test_octree(dx, dy, dz):
-    point = [0, 0, 0]
-    dims = [1, 2, 4]  # 1*2*4 = 8
+    point = Point(0, 0, 0)
+    dims = Vector(1, 2, 4)  # 1*2*4 = 8
 
     print("TEST OCTREE")
     root = Node(point, dims)
@@ -51,8 +50,8 @@ if __name__ == '__main__':
     # test_stl(in_file)
     stl = STL(in_file)
     root = Node(
-        [0, 0, 0],
-        [dx, dy, dz]
+        Point(0, 0, 0),
+        Vector(dx, dy, dz)
     )
-    get_grid(root, condition=1, object=stl)
+    get_grid(root, condition=0.1, object=stl)
     show_octree(root)

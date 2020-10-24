@@ -1,26 +1,23 @@
 import pytest
-from models import Node
+from models import Node, Point, Vector
 from functions import get_grid, print_preorder
 
 
 class TestOctree:
     def test_create_root(self):
         root = Node(
-            [0, 0, 0],
-            [1, 2, 3]
+            Point(0, 0, 0),
+            Vector(1, 2, 3)
         )
-        assert root.x == 0
-        assert root.y == 0
-        assert root.z == 0
-        assert root.dx == 1
-        assert root.dy == 2
-        assert root.dz == 3
+        assert root.start == Point(0, 0, 0)
+        assert len(root.edges) == 12
+        assert len(root.walls) == 6
         assert root.is_leaf is True
 
     def test_create_children(self):
         root = Node(
-            [0, 0, 0],
-            [1, 2, 3]
+            Point(0, 0, 0),
+            Vector(1, 2, 3)
         )
         root.split()
         assert root.is_leaf is False
@@ -29,41 +26,34 @@ class TestOctree:
 
     def test_second_level(self):
         root = Node(
-            [0, 0, 0],
-            [1, 2, 3]
+            Point(0, 0, 0),
+            Vector(1, 2, 3)
         )
         root.split()
 
         last_child = root.branches[0b111]
-        assert last_child.x == 0.5
-        assert last_child.y == 1
-        assert last_child.z == 1.5
-        assert last_child.dx == 0.5
-        assert last_child.dy == 1
-        assert last_child.dz == 1.5
+        assert last_child.start == Point(0.5, 1, 1.5)
+        assert last_child.dim == Vector(0.5, 1, 1.5)
 
     def test_third_level(self):
         root = Node(
-            [0, 0, 0],
-            [1, 2, 3]
+            Point(0, 0, 0),
+            Vector(1, 2, 3)
         )
         root.split()
         last_child = root.branches[0b111]
         last_child.split()
         some_child = last_child.branches[0b110]
-        assert some_child.x == 0.5
-        assert some_child.y == 1.5
-        assert some_child.z == 2.25
-        assert some_child.dx == 0.25
-        assert some_child.dy == 0.5
-        assert some_child.dz == 0.75
+
+        assert some_child.start == Point(0.5, 1.5, 2.25)
+        assert some_child.dim == Vector(0.25, 0.5, 0.75)
 
     def test_get_grid(self):
         root = Node(
-            [0, 0, 0],
-            [1, 2, 4]
+            Point(0, 0, 0),
+            Vector(1, 2, 3)
         )
-        get_grid(root, condition=0.12)
+        get_grid(root, condition=0.07)
         print_preorder(root)
 
         assert root.is_leaf is False
@@ -73,21 +63,16 @@ class TestOctree:
 
         third_level = second_level.branches[1]
         assert third_level.is_leaf is True
-        assert third_level.dx == 0.25
-        assert third_level.dy == 0.5
-        assert third_level.dz == 1
+        assert third_level.dim == Vector(0.25, 0.5, 1)
 
     def test_get_point(self):
         root = Node(
-            [0, 0, 0],
-            [10, 10, 10]
+            Point(0, 0, 0),
+            Vector(1, 2, 3)
         )
         get_grid(root, condition=3)
-        point_to_check = [7, 7, 7]
+        point_to_check = Point(7, 7, 7)
         node = root.find_point(point_to_check)
-        assert node.x == 5
-        assert node.y == 5
-        assert node.z == 5
-        assert node.dx == 2.5
-        assert node.dy == 2.5
-        assert node.dz == 2.5
+
+        assert node.start == Point(5, 5, 5)
+        assert node.dim == Vector(2.5, 2.5, 2.5)

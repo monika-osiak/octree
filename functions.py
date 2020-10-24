@@ -34,33 +34,14 @@ def get_grid(root, condition, object=None):
             get_grid(child, condition, object)
 
 
-def show_model(filename):
-    # Create a new plot
-    figure = pyplot.figure()
-    axes = mplot3d.Axes3D(figure)
-
-    # Load the STL files and add the vectors to the plot
-    your_mesh = mesh.Mesh.from_file(filename)
-    axes.add_collection3d(mplot3d.art3d.Poly3DCollection(your_mesh.vectors))
-
-    # Auto scale to the mesh size
-    scale = your_mesh.points.flatten('F')
-    axes.auto_scale_xyz(scale, scale, scale)
-
-    # Show the plot to the screen
-    pyplot.show()
-
-# TODO: add function to plot octree in 3D
-
-
 def draw_edge(edge, ax):
-    xs = [edge.v1.x, edge.v2.x]
-    ys = [edge.v1.y, edge.v2.y]
-    zs = [edge.v1.z, edge.v2.z]
+    xs = [edge.a.x, edge.b.x]
+    ys = [edge.a.y, edge.b.y]
+    zs = [edge.a.z, edge.b.z]
     ax.plot3D(xs, ys, zs, 'gray')
 
 
-def my_show_model(stl):
+def show_model(stl):
     fig = plt.figure()
     ax = plt.axes(projection='3d')
     print(f'> Draw {stl.filename}...')
@@ -71,7 +52,7 @@ def my_show_model(stl):
 
 def show_node(root, axes):
     if root:
-        for edge in root.e:
+        for edge in root.edges:
             draw_edge(edge, axes)
 
         for child in root.branches:

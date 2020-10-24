@@ -1,4 +1,4 @@
-from stl_models import STL
+from models import STL
 
 
 class TestStl:
