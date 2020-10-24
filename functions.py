@@ -3,6 +3,7 @@ from mpl_toolkits import mplot3d
 from matplotlib import pyplot
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+from math import sqrt
 
 
 def print_preorder(root, i=0, prefix="", last=True):
@@ -63,14 +64,14 @@ def my_show_model(stl):
     fig = plt.figure()
     ax = plt.axes(projection='3d')
     print(f'> Draw {stl.filename}...')
-    for edge in tqdm(stl.edges):
+    for edge in tqdm(stl.e):
         draw_edge(edge, ax)
     plt.show()
 
 
 def show_node(root, axes):
     if root:
-        for edge in root.get_edges():
+        for edge in root.e:
             draw_edge(edge, axes)
 
         for child in root.branches:
@@ -82,3 +83,11 @@ def show_octree(root):
     ax = plt.axes(projection='3d')
     show_node(root, ax)
     plt.show()
+
+
+def length(v):
+    return sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2)
+
+
+def dot_product(v1, v2):
+    return (-1) * (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z)
