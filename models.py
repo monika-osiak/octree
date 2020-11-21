@@ -98,13 +98,14 @@ class Node:
         return x and y and z
 
     def check_object(self, object):
-        for triangle in object.triangles:
-            # variables
-            dx = self.dim.x
-            dy = self.dim.y
-            dz = self.dim.z
-            c = self.start.move(Vector(dx/2, dy/2, dz/2,))
-            step = Vector(-c.x, -c.y, -c.z)
+        # variables
+        dx = self.dim.x
+        dy = self.dim.y
+        dz = self.dim.z
+        c = self.start.move(Vector(dx / 2, dy / 2, dz / 2))
+        step = Vector(-c.x, -c.y, -c.z)
+
+        for i, triangle in enumerate(object.triangles):
             v0 = triangle.v1.move(step)
             v1 = triangle.v2.move(step)
             v2 = triangle.v3.move(step)
@@ -122,13 +123,13 @@ class Node:
             aabb_z_max = max(v0.z, v1.z, v2.z)
 
             if aabb_x_max < -dx/2 or aabb_x_min > dx/2:
-                return False
+                continue
 
             if aabb_y_max < -dy/2 or aabb_y_min > dy/2:
-                return False
+                continue
 
             if aabb_z_max < -dz/2 or aabb_z_min > dz/2:
-                return False
+                continue
 
             # plane/AABB overlap test
             r = dx * abs(triangle.n.x) + dy * abs(triangle.n.y) + dz * abs(triangle.n.z)
@@ -136,7 +137,7 @@ class Node:
             s = dot_product(triangle.n, c) - d
 
             if not abs(s) <= r:
-                return False
+                continue
 
             # last 9 tests
             es = [Vector(1, 0, 0), Vector(0, 1, 0), Vector(0, 0, 1)]
@@ -149,9 +150,9 @@ class Node:
                     p2 = dot_product(a, v2)
                     r = dx * abs(a.x) + dy * abs(a.y) + dz * abs(a.z)
                     if min(p0, p1, p2) > r or max(p0, p1, p2) < -r:
-                        return False
-
+                        continue
             return True
+        return False
 
     def split(self):
         """Podziel węzeł na osiem"""

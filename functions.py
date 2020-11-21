@@ -34,11 +34,11 @@ def get_grid(root, condition, object=None):
             get_grid(child, condition, object)
 
 
-def draw_edge(edge, ax):
+def draw_edge(edge, ax, color='gray'):
     xs = [edge.a.x, edge.b.x]
     ys = [edge.a.y, edge.b.y]
     zs = [edge.a.z, edge.b.z]
-    ax.plot3D(xs, ys, zs, 'gray')
+    ax.plot3D(xs, ys, zs, color)
 
 
 def show_model(stl):
@@ -59,10 +59,12 @@ def show_node(root, axes):
             show_node(child, axes)
 
 
-def show_octree(root):
+def show_octree(root, stl):
     fig = plt.figure()
     ax = plt.axes(projection='3d')
     show_node(root, ax)
+    for edge in stl.edges:
+        draw_edge(edge, ax, 'red')
     plt.show()
 
 

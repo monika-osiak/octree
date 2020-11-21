@@ -53,5 +53,6 @@ if __name__ == '__main__':
         Point(0, 0, 0),
         Vector(dx, dy, dz)
     )
-    get_grid(root, condition=0.1, object=stl)
-    show_octree(root)
+    get_grid(root, condition=10, object=stl)
+    print("> Show grid...")
+    show_octree(root, stl)
