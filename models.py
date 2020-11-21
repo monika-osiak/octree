@@ -98,39 +98,55 @@ class Node:
         return x and y and z
 
     def check_object(self, object):
-        if object is None:
-            return True  # debug only - in this case there is no stl object to compare
+        for triangle in object.triangles:
+            # variables
+            dx = self.dim.x
+            dy = self.dim.y
+            dz = self.dim.z
+            c = self.start.move(Vector(dx/2, dy/2, dz/2,))
+            step = Vector(-c.x, -c.y, -c.z)
+            v0 = triangle.v1.move(step)
+            v1 = triangle.v2.move(step)
+            v2 = triangle.v3.move(step)
+            f0 = Vector(v0, v1)
+            f1 = Vector(v1, v2)
+            f2 = Vector(v2, v0)
 
-        # TODO: splitting if there is object in the node
-        # case 1: vertex
-        for vertex in object.vertices:
-            if self.point_in_node(vertex):
-                return True
+            # AABB vs. AABBtr
+            # AABB triangle variables
+            aabb_x_min = min(v0.x, v1.x, v2.x)
+            aabb_x_max = max(v0.x, v1.x, v2.x)
+            aabb_y_min = min(v0.y, v1.y, v2.y)
+            aabb_y_max = max(v0.y, v1.y, v2.y)
+            aabb_z_min = min(v0.z, v1.z, v2.z)
+            aabb_z_max = max(v0.z, v1.z, v2.z)
 
-        # case 2: edge
-        for edge in object.edges:
-            for wall in self.walls:
-                check_a = dot_product(wall.n, edge.a) + wall.d
-                if check_a == 0 and self.point_in_node(edge.a):
-                    return True
+            if aabb_x_max < -dx/2 or aabb_x_min > dx/2:
+                return False
 
-                check_b = dot_product(wall.n, edge.b) + wall.d
-                if check_b == 0 and self.point_in_node(edge.b):
-                    return True
+            if aabb_y_max < -dy/2 or aabb_y_min > dy/2:
+                return False
 
-                if check_a * check_b < 0:
-                    w = (dot_product(wall.n, edge.b) + wall.d) / dot_product(wall.n, edge.vector)
-                    new_point = Point(
-                        edge.b.x - edge.vector.x * w,
-                        edge.b.y - edge.vector.y * w,
-                        edge.b.z - edge.vector.z * w,
-                    )
-                    if self.point_in_node(new_point):
-                        return True
+            if aabb_z_max < -dz/2 or aabb_z_min > dz/2:
+                return False
 
-        # case 3: triangle
+            # plane/AABB overlap test
+            # TODO
 
-        return False  # TODO: change to False when done
+            # last 9 tests
+            es = [Vector(1, 0, 0), Vector(0, 1, 0), Vector(0, 0, 1)]
+            fs = [f0, f1, f2]
+            for e in es:
+                for f in fs:
+                    a = cross_product(e, f)
+                    p0 = dot_product(a, v0)
+                    p1 = dot_product(a, v1)
+                    p2 = dot_product(a, v2)
+                    r = dx * abs(a.x) + dy * abs(a.y) + dz * abs(a.z)
+                    if min(p0, p1, p2) > r or max(p0, p1, p2) < -r:
+                        return False
+
+            return True
 
     def split(self):
         """Podziel węzeł na osiem"""
@@ -318,3 +334,10 @@ class STL:
             edges += triangle.get_edges()
 
         return set(edges)
+
+def cross_product(a, b):
+    return Vector(
+        a.y*b.z - a.z*b.y,
+        a.z*b.x - a.x*b.z,
+        a.x*b.y - a.y*b.x
+    )
