@@ -131,7 +131,12 @@ class Node:
                 return False
 
             # plane/AABB overlap test
-            # TODO
+            r = dx * abs(triangle.n.x) + dy * abs(triangle.n.y) + dz * abs(triangle.n.z)
+            d = (-1) * dot_product(triangle.n, triangle.v1)
+            s = dot_product(triangle.n, c) - d
+
+            if not abs(s) <= r:
+                return False
 
             # last 9 tests
             es = [Vector(1, 0, 0), Vector(0, 1, 0), Vector(0, 0, 1)]
