@@ -37,6 +37,8 @@ if __name__ == '__main__':
     parser.add_argument("--dy")
     parser.add_argument("--dz")
 
+    parser.add_argument("--condition")
+
     args = parser.parse_args()
 
     in_file = args.input
@@ -44,6 +46,7 @@ if __name__ == '__main__':
     dx = int(args.dx)
     dy = int(args.dy)
     dz = int(args.dz)
+    condition = float(args.condition)
 
     # test_octree(dx, dy, dz)
     # print("-------------------------")
@@ -53,6 +56,6 @@ if __name__ == '__main__':
         Point(0, 0, 0),
         Vector(dx, dy, dz)
     )
-    get_grid(root, condition=10, object=stl)
+    get_grid(root, condition=condition, object=stl)
     print("> Show grid...")
     show_octree(root, stl)
