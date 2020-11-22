@@ -36,39 +36,6 @@ class Node:
             Edge(self.vertices[6], self.vertices[4])
         ]
 
-        self.walls = [
-            NodeWall(
-                Vector(self.vertices[2], self.vertices[0]),
-                Vector(self.vertices[1], self.vertices[0]),
-                self.vertices[0]
-            ),
-            NodeWall(
-                Vector(self.vertices[3], self.vertices[1]),
-                Vector(self.vertices[5], self.vertices[1]),
-                self.vertices[1]
-            ),
-            NodeWall(
-                Vector(self.vertices[2], self.vertices[3]),
-                Vector(self.vertices[7], self.vertices[3]),
-                self.vertices[3]
-            ),
-            NodeWall(
-                Vector(self.vertices[0], self.vertices[2]),
-                Vector(self.vertices[6], self.vertices[2]),
-                self.vertices[2]
-            ),
-            NodeWall(
-                Vector(self.vertices[1], self.vertices[0]),
-                Vector(self.vertices[4], self.vertices[0]),
-                self.vertices[0]
-            ),
-            NodeWall(
-                Vector(self.vertices[5], self.vertices[4]),
-                Vector(self.vertices[6], self.vertices[4]),
-                self.vertices[4]
-            )
-        ]
-
         self.is_leaf = True  # kazdy węzeł na początku jest liściem
         self.branches = [None] * 8
 
@@ -223,29 +190,6 @@ class Vector:
 
     def __str__(self):
         return f'[{self.x}, {self.y}, {self.z}]'
-
-
-class NodeWall:
-    def __init__(self, v1, v2, p):
-        self.v1 = v1  # vector
-        self.v2 = v2  # vector
-        self.n = self.get_n()  # vector
-        self.d = self.get_d(p)  # float
-
-    def get_n(self):
-        cross_product = Vector(
-            self.v1.y * self.v2.z - self.v2.y * self.v1.z,
-            self.v2.x * self.v1.z - self.v1.x * self.v2.z,
-            self.v1.x * self.v2.y - self.v2.x * self.v1.y
-        )
-        return Vector(
-            cross_product.x / cross_product.length(),
-            cross_product.y / cross_product.length(),
-            cross_product.z / cross_product.length()
-        )
-
-    def get_d(self, p):
-        return (-1) * dot_product(self.n, p)
 
 
 class Point:
