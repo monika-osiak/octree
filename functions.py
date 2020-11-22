@@ -59,12 +59,14 @@ def show_node(root, axes):
             show_node(child, axes)
 
 
-def show_octree(root, stl):
+def show_octree(root, stl=None):
     fig = plt.figure()
     ax = plt.axes(projection='3d')
     show_node(root, ax)
-    for edge in stl.edges:
-        draw_edge(edge, ax, 'red')
+    if stl:
+        print('> Draw STL object...')
+        for edge in tqdm(stl.edges):
+            draw_edge(edge, ax, 'red')
     plt.show()
 
 
