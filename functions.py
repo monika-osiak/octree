@@ -22,7 +22,7 @@ def show_octree(root, stl=None):
     if stl:
         print('> Draw STL object...')
         for edge in tqdm(stl.edges):
-            draw_edge(edge, ax, 'red')
+            draw_edge(edge.a, edge.b, ax, 'red')
 
     plt.show()
 
