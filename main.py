@@ -53,9 +53,9 @@ if __name__ == '__main__':
     # test_stl(in_file)
     stl = STL(in_file)
     root = Node(
-        Point(0, 0, 0),
+        Point(-5, -5, -5),
         Vector(dx, dy, dz)
     )
     get_grid(root, condition=condition, object=stl)
     print("> Show grid...")
-    show_octree(root, stl)
+    show_octree(root)

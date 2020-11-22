@@ -36,6 +36,44 @@ class Node:
             Edge(self.vertices[6], self.vertices[4])
         ]
 
+        p01 = self.vertices[0].move(Vector(self.dim.x/2, 0, 0))
+        p13 = self.vertices[1].move(Vector(0, 0, self.dim.z/2))
+        p32 = self.vertices[2].move(Vector(self.dim.x/2, 0, 0))
+        p20 = self.vertices[0].move(Vector(0, 0, self.dim.z/2))
+        p04 = self.vertices[0].move(Vector(0, self.dim.y/2, 0))
+        p15 = self.vertices[1].move(Vector(0, self.dim.y/2, 0))
+        p37 = self.vertices[3].move(Vector(0, self.dim.y/2, 0))
+        p26 = self.vertices[2].move(Vector(0, self.dim.y/2, 0))
+        p45 = self.vertices[4].move(Vector(self.dim.x/2, 0, 0))
+        p57 = self.vertices[5].move(Vector(0, 0, self.dim.z/2))
+        p76 = self.vertices[6].move(Vector(self.dim.x/2, 0, 0))
+        p64 = self.vertices[4].move(Vector(0, 0, self.dim.z/2))
+
+        p0145 = self.vertices[0].move(Vector(self.dim.x/2, self.dim.y/2, 0))
+        p1375 = self.vertices[1].move(Vector(0, self.dim.y/2, self.dim.z/2))
+        p2376 = self.vertices[2].move(Vector(self.dim.x/2, self.dim.y/2, 0))
+        p0264 = self.vertices[0].move(Vector(0, self.dim.y/2, self.dim.z/2))
+        p0132 = self.vertices[0].move(Vector(self.dim.x/2, 0, self.dim.z/2))
+        p4576 = self.vertices[4].move(Vector(self.dim.x/2, 0, self.dim.z/2))
+
+        self.middle_edges = [
+            [p01, p32],
+            [p32, p76],
+            [p76, p45],
+            [p45, p01],
+            [p04, p15],
+            [p15, p37],
+            [p37, p26],
+            [p26, p04],
+            [p20, p13],
+            [p13, p57],
+            [p57, p64],
+            [p64, p20],
+            [p0132, p4576],
+            [p0145, p2376],
+            [p0264, p1375]
+        ]
+
         self.is_leaf = True  # kazdy węzeł na początku jest liściem
         self.branches = [None] * 8
 
