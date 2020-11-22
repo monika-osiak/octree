@@ -123,15 +123,23 @@ class Node:
         return True
 
     def check_plane(self, triangle):
+        def condition(v1, v2):
+            return (dot_product(triangle.n, v1) + d) * (dot_product(triangle.n, v2)) <= 0
+
         # UWAGA: tutaj nie uwzględniamy przesunięcia o c
         d = (-1) * dot_product(triangle.n, triangle.v1)
-        c1 = (dot_product(triangle.n, self.vertices[0]) + d) * (dot_product(triangle.n, self.vertices[7])) <= 0
-        c2 = (dot_product(triangle.n, self.vertices[1]) + d) * (dot_product(triangle.n, self.vertices[6])) <= 0
-        c3 = (dot_product(triangle.n, self.vertices[2]) + d) * (dot_product(triangle.n, self.vertices[5])) <= 0
-        c4 = (dot_product(triangle.n, self.vertices[3]) + d) * (dot_product(triangle.n, self.vertices[4])) <= 0
+        pairs = [
+            [self.vertices[0], self.vertices[7]],
+            [self.vertices[1], self.vertices[6]],
+            [self.vertices[2], self.vertices[5]],
+            [self.vertices[3], self.vertices[4]],
+        ]
 
-        # if not c1 and not c2 and not c3 and not c4:  # no intersection
-        return c1 or c2 or c3 or c4
+        for v1, v2 in pairs:
+            if condition(v1, v2):
+                return True
+
+        return False
 
     def final_check(self, v0, v1, v2):
         es = [Vector(1, 0, 0), Vector(0, 1, 0), Vector(0, 0, 1)]
