@@ -1,4 +1,3 @@
-from functions import dot_product
 from math import sqrt
 from tqdm import tqdm
 
@@ -9,159 +8,42 @@ class Node:
         self.dim = dim  # Vector
 
         self.vertices = [
-            point,
-            Point(point.x + dim.x, point.y, point.z),
-            Point(point.x, point.y, point.z + dim.z),
-            Point(point.x + dim.x, point.y, point.z + dim.z),
-            Point(point.x, point.y + dim.y, point.z),
-            Point(point.x + dim.x, point.y + dim.y, point.z),
-            Point(point.x, point.y + dim.y, point.z + dim.z),
-            Point(point.x + dim.x, point.y + dim.y, point.z + dim.z)
-        ]
+            self.start.move(Vector(0, 0, 0)),
+            self.start.move(Vector(dim.x, 0, 0)),
+            self.start.move(Vector(0, 0, dim.z)),
+            self.start.move(Vector(dim.x, 0, dim.z)),
 
-        self.edges = [
-            Edge(self.vertices[0], self.vertices[1]),
-            Edge(self.vertices[1], self.vertices[3]),
-            Edge(self.vertices[3], self.vertices[2]),
-            Edge(self.vertices[2], self.vertices[0]),
-
-            Edge(self.vertices[0], self.vertices[4]),
-            Edge(self.vertices[1], self.vertices[5]),
-            Edge(self.vertices[3], self.vertices[7]),
-            Edge(self.vertices[2], self.vertices[6]),
-
-            Edge(self.vertices[4], self.vertices[5]),
-            Edge(self.vertices[5], self.vertices[7]),
-            Edge(self.vertices[7], self.vertices[6]),
-            Edge(self.vertices[6], self.vertices[4])
-        ]
-
-        p01 = self.vertices[0].move(Vector(self.dim.x/2, 0, 0))
-        p13 = self.vertices[1].move(Vector(0, 0, self.dim.z/2))
-        p32 = self.vertices[2].move(Vector(self.dim.x/2, 0, 0))
-        p20 = self.vertices[0].move(Vector(0, 0, self.dim.z/2))
-        p04 = self.vertices[0].move(Vector(0, self.dim.y/2, 0))
-        p15 = self.vertices[1].move(Vector(0, self.dim.y/2, 0))
-        p37 = self.vertices[3].move(Vector(0, self.dim.y/2, 0))
-        p26 = self.vertices[2].move(Vector(0, self.dim.y/2, 0))
-        p45 = self.vertices[4].move(Vector(self.dim.x/2, 0, 0))
-        p57 = self.vertices[5].move(Vector(0, 0, self.dim.z/2))
-        p76 = self.vertices[6].move(Vector(self.dim.x/2, 0, 0))
-        p64 = self.vertices[4].move(Vector(0, 0, self.dim.z/2))
-
-        p0145 = self.vertices[0].move(Vector(self.dim.x/2, self.dim.y/2, 0))
-        p1375 = self.vertices[1].move(Vector(0, self.dim.y/2, self.dim.z/2))
-        p2376 = self.vertices[2].move(Vector(self.dim.x/2, self.dim.y/2, 0))
-        p0264 = self.vertices[0].move(Vector(0, self.dim.y/2, self.dim.z/2))
-        p0132 = self.vertices[0].move(Vector(self.dim.x/2, 0, self.dim.z/2))
-        p4576 = self.vertices[4].move(Vector(self.dim.x/2, 0, self.dim.z/2))
-
-        self.middle_edges = [
-            [p01, p32],
-            [p32, p76],
-            [p76, p45],
-            [p45, p01],
-            [p04, p15],
-            [p15, p37],
-            [p37, p26],
-            [p26, p04],
-            [p20, p13],
-            [p13, p57],
-            [p57, p64],
-            [p64, p20],
-            [p0132, p4576],
-            [p0145, p2376],
-            [p0264, p1375]
+            self.start.move(Vector(0, dim.y, 0)),
+            self.start.move(Vector(dim.x, dim.y, 0)),
+            self.start.move(Vector(0, dim.y, dim.z)),
+            self.start.move(Vector(dim.x, dim.y, dim.z))
         ]
 
         self.is_leaf = True  # kazdy węzeł na początku jest liściem
         self.branches = [None] * 8
 
-    def __str__(self):
-        """Reprezentacja pojedynczego węzła jako jego punkt początkowy; debug only."""
-        return f'{self.start} -> {self.dim.x}, {self.dim.y}, {self.dim.z}'
+    def split(self):
+        """Podziel węzeł na osiem"""
+        self.is_leaf = False
+
+        new_dim = Vector(self.dim.x / 2, self.dim.y / 2, self.dim.z / 2)
+
+        self.branches[0b000] = Node(self.start.move(Vector(0, 0, 0)), new_dim)
+        self.branches[0b001] = Node(self.start.move(Vector(new_dim.x, 0, 0)), new_dim)
+        self.branches[0b010] = Node(self.start.move(Vector(0, 0, new_dim.z)), new_dim)
+        self.branches[0b011] = Node(self.start.move(Vector(new_dim.x, 0, new_dim.z)), new_dim)
+
+        self.branches[0b100] = Node(self.start.move(Vector(0, new_dim.y, 0)), new_dim)
+        self.branches[0b101] = Node(self.start.move(Vector(new_dim.x, new_dim.y, 0)), new_dim)
+        self.branches[0b110] = Node(self.start.move(Vector(0, new_dim.y, new_dim.z)), new_dim)
+        self.branches[0b111] = Node(self.start.move(Vector(new_dim.x, new_dim.y, new_dim.z)), new_dim)
 
     def can_be_split(self, condition, object):
         c1 = (self.dim.x / 2) * (self.dim.y / 2) * (self.dim.z / 2) >= condition
-        # print(f'>> Volume: {c1}')
-
         c2 = self.check_object(object)
-        # print(f'>> Is object? {c2}')
-        # print('____')
-
         return c1 and c2
 
-    def point_in_node(self, point):
-        if self.start.x < self.vertices[-1].x:
-            x = self.start.x <= point.x <= self.vertices[-1].x
-        else:
-            x = self.vertices[-1].x <= point.x <= self.start.x
-
-        if self.start.y < self.vertices[-1].y:
-            y = self.start.y <= point.y <= self.vertices[-1].y
-        else:
-            y = self.vertices[-1].y <= point.y <= self.start.y
-
-        if self.start.z < self.vertices[-1].z:
-            z = self.start.z <= point.z <= self.vertices[-1].z
-        else:
-            z = self.vertices[-1].z <= point.z <= self.start.z
-
-        return x and y and z
-
-    def check_AABB(self, v0, v1, v2):
-        aabb_x_min = min(v0.x, v1.x, v2.x)
-        aabb_x_max = max(v0.x, v1.x, v2.x)
-        if aabb_x_max < -self.dim.x / 2 or aabb_x_min > self.dim.x / 2:
-            return False
-
-        aabb_y_min = min(v0.y, v1.y, v2.y)
-        aabb_y_max = max(v0.y, v1.y, v2.y)
-        if aabb_y_max < -self.dim.y / 2 or aabb_y_min > self.dim.y / 2:
-            return False
-
-        aabb_z_min = min(v0.z, v1.z, v2.z)
-        aabb_z_max = max(v0.z, v1.z, v2.z)
-        if aabb_z_max < -self.dim.z / 2 or aabb_z_min > self.dim.z / 2:
-            return False
-
-        return True
-
-    def check_plane(self, triangle):
-        def condition(v1, v2):
-            return (dot_product(triangle.n, v1) + d) * (dot_product(triangle.n, v2)) <= 0
-
-        # UWAGA: tutaj nie uwzględniamy przesunięcia o c
-        d = (-1) * dot_product(triangle.n, triangle.v1)
-        pairs = [
-            [self.vertices[0], self.vertices[7]],
-            [self.vertices[1], self.vertices[6]],
-            [self.vertices[2], self.vertices[5]],
-            [self.vertices[3], self.vertices[4]],
-        ]
-
-        for v1, v2 in pairs:
-            if condition(v1, v2):
-                return True
-
-        return False
-
-    def final_check(self, v0, v1, v2):
-        es = [Vector(1, 0, 0), Vector(0, 1, 0), Vector(0, 0, 1)]
-        fs = [Vector(v0, v1), Vector(v1, v2), Vector(v2, v0)]
-        for e in es:
-            for f in fs:
-                a = cross_product(e, f)
-                p0 = dot_product(a, v0)
-                p1 = dot_product(a, v1)
-                p2 = dot_product(a, v2)
-                r = self.dim.x * abs(a.x) + self.dim.y * abs(a.y) + self.dim.z * abs(a.z)
-                if min(p0, p1, p2) > r or max(p0, p1, p2) < -r:
-                    return False
-        return True
-
     def check_object(self, object):
-        # variables
         c = self.start.move(Vector(self.dim.x / 2, self.dim.y / 2, self.dim.z / 2))
         step = Vector(-c.x, -c.y, -c.z)
 
@@ -182,21 +64,119 @@ class Node:
             return True
         return False
 
-    def split(self):
-        """Podziel węzeł na osiem"""
-        self.is_leaf = False
+    def check_AABB(self, v0, v1, v2):
+        x_min = min(v0.x, v1.x, v2.x)
+        x_max = max(v0.x, v1.x, v2.x)
+        if x_max < -self.dim.x / 2 or x_min > self.dim.x / 2:
+            return False
 
-        dim = Vector(self.dim.x / 2, self.dim.y / 2, self.dim.z / 2)
+        y_min = min(v0.y, v1.y, v2.y)
+        y_max = max(v0.y, v1.y, v2.y)
+        if y_max < -self.dim.y / 2 or y_min > self.dim.y / 2:
+            return False
 
-        self.branches[0b000] = Node(self.start.move(Vector(0, 0, 0)), dim)
-        self.branches[0b001] = Node(self.start.move(Vector(dim.x, 0, 0)), dim)
-        self.branches[0b010] = Node(self.start.move(Vector(0, 0, dim.z)), dim)
-        self.branches[0b011] = Node(self.start.move(Vector(dim.x, 0, dim.z)), dim)
+        z_min = min(v0.z, v1.z, v2.z)
+        z_max = max(v0.z, v1.z, v2.z)
+        if z_max < -self.dim.z / 2 or z_min > self.dim.z / 2:
+            return False
 
-        self.branches[0b100] = Node(self.start.move(Vector(0, dim.y, 0)), dim)
-        self.branches[0b101] = Node(self.start.move(Vector(dim.x, dim.y, 0)), dim)
-        self.branches[0b110] = Node(self.start.move(Vector(0, dim.y, dim.z)), dim)
-        self.branches[0b111] = Node(self.start.move(Vector(dim.x, dim.y, dim.z)), dim)
+        return True
+
+    def check_plane(self, triangle):
+        def condition(p1, p2):
+            return (triangle.n.dot_product(p1) + d) * (triangle.n.dot_product(p2) + d) <= 0
+
+        d = (-1) * triangle.n.dot_product(triangle.v1)
+        pairs = [
+            [self.vertices[0], self.vertices[7]],
+            [self.vertices[1], self.vertices[6]],
+            [self.vertices[2], self.vertices[5]],
+            [self.vertices[3], self.vertices[4]],
+        ]
+
+        for v1, v2 in pairs:
+            if condition(v1, v2):
+                return True
+
+        return False
+
+    def final_check(self, v0, v1, v2):
+        es = [Vector(1, 0, 0), Vector(0, 1, 0), Vector(0, 0, 1)]
+        fs = [Vector(v0, v1), Vector(v1, v2), Vector(v2, v0)]
+        for e in es:
+            for f in fs:
+                a = e.cross_product(f)
+                p0 = a.dot_product(v0)
+                p1 = a.dot_product(v1)
+                p2 = a.dot_product(v2)
+                r = self.dim.x * abs(a.x) + self.dim.y * abs(a.y) + self.dim.z * abs(a.z)
+                if min(p0, p1, p2) > r or max(p0, p1, p2) < -r:
+                    return False
+        return True
+
+    def get_external_edges(self):
+        return [
+            [self.vertices[0], self.vertices[1]],
+            [self.vertices[1], self.vertices[3]],
+            [self.vertices[3], self.vertices[2]],
+            [self.vertices[2], self.vertices[0]],
+
+            [self.vertices[0], self.vertices[4]],
+            [self.vertices[1], self.vertices[5]],
+            [self.vertices[3], self.vertices[7]],
+            [self.vertices[2], self.vertices[6]],
+
+            [self.vertices[4], self.vertices[5]],
+            [self.vertices[5], self.vertices[7]],
+            [self.vertices[7], self.vertices[6]],
+            [self.vertices[6], self.vertices[4]]
+        ]
+
+    def get_inner_edges(self):
+        p01 = self.vertices[0].move(Vector(self.dim.x / 2, 0, 0))
+        p13 = self.vertices[1].move(Vector(0, 0, self.dim.z / 2))
+        p32 = self.vertices[2].move(Vector(self.dim.x / 2, 0, 0))
+        p20 = self.vertices[0].move(Vector(0, 0, self.dim.z / 2))
+        p04 = self.vertices[0].move(Vector(0, self.dim.y / 2, 0))
+        p15 = self.vertices[1].move(Vector(0, self.dim.y / 2, 0))
+        p37 = self.vertices[3].move(Vector(0, self.dim.y / 2, 0))
+        p26 = self.vertices[2].move(Vector(0, self.dim.y / 2, 0))
+        p45 = self.vertices[4].move(Vector(self.dim.x / 2, 0, 0))
+        p57 = self.vertices[5].move(Vector(0, 0, self.dim.z / 2))
+        p76 = self.vertices[6].move(Vector(self.dim.x / 2, 0, 0))
+        p64 = self.vertices[4].move(Vector(0, 0, self.dim.z / 2))
+
+        p0145 = self.vertices[0].move(Vector(self.dim.x / 2, self.dim.y / 2, 0))
+        p1375 = self.vertices[1].move(Vector(0, self.dim.y / 2, self.dim.z / 2))
+        p2376 = self.vertices[2].move(Vector(self.dim.x / 2, self.dim.y / 2, 0))
+        p0264 = self.vertices[0].move(Vector(0, self.dim.y / 2, self.dim.z / 2))
+        p0132 = self.vertices[0].move(Vector(self.dim.x / 2, 0, self.dim.z / 2))
+        p4576 = self.vertices[4].move(Vector(self.dim.x / 2, 0, self.dim.z / 2))
+
+        return [
+            [p01, p32], [p32, p76], [p76, p45], [p45, p01],
+            [p04, p15], [p15, p37], [p37, p26], [p26, p04],
+            [p20, p13], [p13, p57], [p57, p64], [p64, p20],
+            [p0132, p4576], [p0145, p2376], [p0264, p1375]
+        ]
+
+    def point_in_node(self, point):
+        if self.start.x < self.vertices[-1].x:
+            x = self.start.x <= point.x <= self.vertices[-1].x
+        else:
+            x = self.vertices[-1].x <= point.x <= self.start.x
+
+        if self.start.y < self.vertices[-1].y:
+            y = self.start.y <= point.y <= self.vertices[-1].y
+        else:
+            y = self.vertices[-1].y <= point.y <= self.start.y
+
+        if self.start.z < self.vertices[-1].z:
+            z = self.start.z <= point.z <= self.vertices[-1].z
+        else:
+            z = self.vertices[-1].z <= point.z <= self.start.z
+
+        return x and y and z
 
     def find_point(self, point):
         if self is None or self.is_leaf:
@@ -222,6 +202,16 @@ class Vector:
 
     def length(self):
         return sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
+
+    def dot_product(self, other):
+        return self.x * other.x + self.y * other.y + self.z * other.z
+
+    def cross_product(self, other):
+        return Vector(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x
+        )
 
     def __eq__(self, obj):
         return isinstance(obj, Vector) and obj.x == self.x and obj.y == self.y and obj.z == self.z
@@ -257,7 +247,6 @@ class Edge:
     def __init__(self, p1, p2):
         self.a = p1  # Point
         self.b = p2  # Point
-        self.vector = Vector(p1, p2)
 
     def __str__(self):
         return f"{self.a} -> {self.b}"
@@ -345,10 +334,3 @@ class STL:
             edges += triangle.get_edges()
 
         return set(edges)
-
-def cross_product(a, b):
-    return Vector(
-        a.y*b.z - a.z*b.y,
-        a.z*b.x - a.x*b.z,
-        a.x*b.y - a.y*b.x
-    )
