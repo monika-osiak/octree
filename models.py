@@ -78,11 +78,11 @@ class Node:
 
     def can_be_split(self, condition, object):
         c1 = (self.dim.x / 2) * (self.dim.y / 2) * (self.dim.z / 2) >= condition
-        print(f'>> Volume: {c1}')
+        # print(f'>> Volume: {c1}')
 
         c2 = self.check_object(object)
-        print(f'>> Is object? {c2}')
-        print('____')
+        # print(f'>> Is object? {c2}')
+        # print('____')
 
         return c1 and c2
 
@@ -104,110 +104,66 @@ class Node:
 
         return x and y and z
 
+    def check_AABB(self, v0, v1, v2):
+        aabb_x_min = min(v0.x, v1.x, v2.x)
+        aabb_x_max = max(v0.x, v1.x, v2.x)
+        if aabb_x_max < -self.dim.x / 2 or aabb_x_min > self.dim.x / 2:
+            return False
+
+        aabb_y_min = min(v0.y, v1.y, v2.y)
+        aabb_y_max = max(v0.y, v1.y, v2.y)
+        if aabb_y_max < -self.dim.y / 2 or aabb_y_min > self.dim.y / 2:
+            return False
+
+        aabb_z_min = min(v0.z, v1.z, v2.z)
+        aabb_z_max = max(v0.z, v1.z, v2.z)
+        if aabb_z_max < -self.dim.z / 2 or aabb_z_min > self.dim.z / 2:
+            return False
+
+        return True
+
+    def check_plane(self, triangle):
+        # UWAGA: tutaj nie uwzględniamy przesunięcia o c
+        d = (-1) * dot_product(triangle.n, triangle.v1)
+        c1 = (dot_product(triangle.n, self.vertices[0]) + d) * (dot_product(triangle.n, self.vertices[7])) <= 0
+        c2 = (dot_product(triangle.n, self.vertices[1]) + d) * (dot_product(triangle.n, self.vertices[6])) <= 0
+        c3 = (dot_product(triangle.n, self.vertices[2]) + d) * (dot_product(triangle.n, self.vertices[5])) <= 0
+        c4 = (dot_product(triangle.n, self.vertices[3]) + d) * (dot_product(triangle.n, self.vertices[4])) <= 0
+
+        # if not c1 and not c2 and not c3 and not c4:  # no intersection
+        return c1 or c2 or c3 or c4
+
+    def final_check(self, v0, v1, v2):
+        es = [Vector(1, 0, 0), Vector(0, 1, 0), Vector(0, 0, 1)]
+        fs = [Vector(v0, v1), Vector(v1, v2), Vector(v2, v0)]
+        for e in es:
+            for f in fs:
+                a = cross_product(e, f)
+                p0 = dot_product(a, v0)
+                p1 = dot_product(a, v1)
+                p2 = dot_product(a, v2)
+                r = self.dim.x * abs(a.x) + self.dim.y * abs(a.y) + self.dim.z * abs(a.z)
+                if min(p0, p1, p2) > r or max(p0, p1, p2) < -r:
+                    return False
+        return True
+
     def check_object(self, object):
         # variables
-        dx = self.dim.x
-        dy = self.dim.y
-        dz = self.dim.z
-        c = self.start.move(Vector(dx / 2, dy / 2, dz / 2))
+        c = self.start.move(Vector(self.dim.x / 2, self.dim.y / 2, self.dim.z / 2))
         step = Vector(-c.x, -c.y, -c.z)
-        print(f'>> Checking node c = {c} with dim = ({dx}, {dy}, {dz})')
 
         for triangle in object.triangles:
             v0 = triangle.v1.move(step)
             v1 = triangle.v2.move(step)
             v2 = triangle.v3.move(step)
-            f0 = Vector(v0, v1)
-            f1 = Vector(v1, v2)
-            f2 = Vector(v2, v0)
-            print(f'>>> New triangle: {v0}, {v1}, {v2}')
 
-            # AABB vs. AABBtr
-            # AABB triangle variables
-            aabb_x_min = min(v0.x, v1.x, v2.x)
-            aabb_x_max = max(v0.x, v1.x, v2.x)
-            print(f'>>> x = ({aabb_x_min}, {aabb_x_max})')
-
-            aabb_y_min = min(v0.y, v1.y, v2.y)
-            aabb_y_max = max(v0.y, v1.y, v2.y)
-            print(f'>>> y = ({aabb_y_min}, {aabb_y_max})')
-
-            aabb_z_min = min(v0.z, v1.z, v2.z)
-            aabb_z_max = max(v0.z, v1.z, v2.z)
-            print(f'>>> z = ({aabb_z_min}, {aabb_z_max})')
-
-            print(f'>>> -dx/2 = {-dx/2}')
-            print(f'>>> dx/2 = {dx / 2}')
-
-            if aabb_x_max < -dx/2 or aabb_x_min > dx/2:
+            if not self.check_AABB(v0, v1, v2):
                 continue
-            print('>>> Test 1 passed')
 
-            if aabb_y_max < -dy/2 or aabb_y_min > dy/2:
+            if not self.check_plane(triangle):
                 continue
-            print('>>> Test 2 passed')
 
-            if aabb_z_max < -dz/2 or aabb_z_min > dz/2:
-                continue
-            print('>>> Test 3 passed')
-
-            d = (-1) * dot_product(triangle.n, triangle.v1)
-            c1 = (dot_product(triangle.n, self.vertices[0]) + d) * (dot_product(triangle.n, self.vertices[7])) <= 0
-            c2 = (dot_product(triangle.n, self.vertices[1]) + d) * (dot_product(triangle.n, self.vertices[6])) <= 0
-            c3 = (dot_product(triangle.n, self.vertices[2]) + d) * (dot_product(triangle.n, self.vertices[5])) <= 0
-            c4 = (dot_product(triangle.n, self.vertices[3]) + d) * (dot_product(triangle.n, self.vertices[4])) <= 0
-
-            # if not c1 and not c2 and not c3 and not c4:  # no intersection
-            if not (c1 or c2 or c3 or c4):
-                continue
-            print('>>> Test 4 passed')
-
-            '''
-            # plane/AABB overlap test
-            r = dx * abs(triangle.n.x) + dy * abs(triangle.n.y) + dz * abs(triangle.n.z)
-            print(f'>>> r = {r}')
-            d = (-1) * dot_product(triangle.n, triangle.v1)
-            s = dot_product(triangle.n, c) - d
-            print(f'>>> s = {s}')
-
-            if not abs(s) <= r:  # no intersection
-                print('>>> No intersection :(')
-                continue
-            print('>>> Test 4 passed')
-            '''
-
-
-
-            # last 9 tests
-            e0 = Vector(1, 0, 0)
-            e1 = Vector(0, 1, 0)
-            e2 = Vector(0, 0, 1)
-
-            test_cases = [
-                [e0, f0],
-                [e0, f1],
-                [e0, f2],
-                [e1, f0],
-                [e1, f1],
-                [e1, f2],
-                [e2, f0],
-                [e2, f1],
-                [e2, f2],
-            ]
-
-            broken = False
-            for i, data in enumerate(test_cases):
-                e, f = data
-                a = cross_product(e, f)
-                p0 = dot_product(a, v0)
-                p1 = dot_product(a, v1)
-                p2 = dot_product(a, v2)
-                r = dx * abs(a.x) + dy * abs(a.y) + dz * abs(a.z)
-                if min(p0, p1, p2) > r or max(p0, p1, p2) < -r:
-                    broken = True
-                    break
-                print(f'>>> Test {i+3} passed')
-            if broken:
+            if not self.final_check(v0, v1, v2):
                 continue
 
             return True
