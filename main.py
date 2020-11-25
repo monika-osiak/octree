@@ -37,4 +37,4 @@ if __name__ == '__main__':
     root = Node(start_point, dimensions)
     get_grid(root, condition=condition, object=stl)
     print('> Show grid...')
-    show_octree(root, stl)
+    show_full_octree(root, stl)

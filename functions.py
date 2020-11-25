@@ -40,6 +40,33 @@ def show_single_node(root, axes):
             show_single_node(child, axes)
 
 
+def show_full_octree(root, stl=None):
+    fig = plt.figure()
+    ax = plt.axes(projection='3d')
+
+    if stl:
+        print('> Draw STL object...')
+        for edge in tqdm(stl.edges):
+            draw_edge(edge.a, edge.b, ax, 'red')
+
+    for p1, p2 in root.get_external_edges():
+        draw_edge(p1, p2, ax)
+
+    show_full_single_node(root, ax)
+
+    plt.show()
+
+
+def show_full_single_node(root, axes):
+    if root:
+        if root.is_leaf and root.material == 1:
+            for p1, p2 in root.get_external_edges():
+                draw_edge(p1, p2, axes)
+
+        for child in root.branches:
+            show_full_single_node(child, axes)
+
+
 def draw_edge(p1, p2, ax, color='gray'):
     xs = [p1.x, p2.x]
     ys = [p1.y, p2.y]
