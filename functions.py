@@ -15,6 +15,7 @@ def get_grid(root, condition, object=None):
 
 
 def show_octree(root, stl=None):
+    print('> Show the full octree...')
     fig = plt.figure()
     ax = plt.axes(projection='3d')
 
@@ -24,7 +25,7 @@ def show_octree(root, stl=None):
     show_single_node(root, ax)
 
     if stl:
-        print('> Draw STL object...')
+        print('> Show STL object...')
         for edge in tqdm(stl.edges):
             draw_edge(edge.a, edge.b, ax, 'red')
 
@@ -40,7 +41,8 @@ def show_single_node(root, axes):
             show_single_node(child, axes)
 
 
-def show_full_octree(root, stl=None):
+def show_object_octree(root, stl=None):
+    print('> Show the octree with object nodes only...')
     fig = plt.figure()
     ax = plt.axes(projection='3d')
 
@@ -52,19 +54,19 @@ def show_full_octree(root, stl=None):
     for p1, p2 in root.get_external_edges():
         draw_edge(p1, p2, ax)
 
-    show_full_single_node(root, ax)
+    show_object_single_node(root, ax)
 
     plt.show()
 
 
-def show_full_single_node(root, axes):
+def show_object_single_node(root, axes):
     if root:
         if root.is_leaf and root.material == 1:
             for p1, p2 in root.get_external_edges():
                 draw_edge(p1, p2, axes)
 
         for child in root.branches:
-            show_full_single_node(child, axes)
+            show_object_single_node(child, axes)
 
 
 def draw_edge(p1, p2, ax, color='gray'):

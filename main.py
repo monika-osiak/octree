@@ -34,7 +34,7 @@ if __name__ == '__main__':
     condition = float(config['OTHERS']['minimum volume'])
 
     stl = STL(stl_file)
+    print('> Generate octree...')
     root = Node(start_point, dimensions)
     get_grid(root, condition=condition, object=stl)
-    print('> Show grid...')
-    show_full_octree(root, stl)
+    show_octree(root, stl)
