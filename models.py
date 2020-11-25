@@ -1,5 +1,6 @@
 from math import sqrt
 from tqdm import tqdm
+import numpy as np
 
 
 class Node:
@@ -242,6 +243,9 @@ class Point:
             self.z + vector.z,
         )
 
+    def as_numpy(self):
+        return np.array([self.x, self.y, self.z])
+
 
 class Edge:
     def __init__(self, p1, p2):
@@ -287,7 +291,7 @@ class STL:
 
         self.parse_file()
 
-        self.triangles = self.get_triangles()
+        self.triangles, self.np_triangles = self.get_triangles()
         self.vertices = self.get_vertices()
         self.edges = self.get_edges()
 
@@ -308,6 +312,7 @@ class STL:
 
     def get_triangles(self):
         triangles = []
+        np_triangles = []
 
         print('> Get triangles...')
         for i, normal in tqdm(enumerate(self.normal_array)):
@@ -318,9 +323,16 @@ class STL:
                 normal
             )
 
-            triangles.append(triangle)
+            np_triangle = np.array([
+                self.vertex_array[3 * i].as_numpy(),
+                self.vertex_array[3 * i + 1].as_numpy(),
+                self.vertex_array[3 * i + 2].as_numpy(),
+            ])
 
-        return triangles
+            triangles.append(triangle)
+            np_triangles.append(np_triangle)
+
+        return triangles, np.array(np_triangles)
 
     def get_vertices(self):
         print('> Get vertices...')
