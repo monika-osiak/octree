@@ -1,5 +1,6 @@
 from math import sqrt
 from tqdm import tqdm
+from functions import is_inside
 import numpy as np
 
 
@@ -22,6 +23,12 @@ class Node:
 
         self.is_leaf = True  # kazdy węzeł na początku jest liściem
         self.branches = [None] * 8
+        self.material = 0  # kazdy wezel domyslnie nalezy do tla
+
+    def determine_material(self, obj):
+        c = self.start.move(Vector(self.dim.x / 2, self.dim.y / 2, self.dim.z / 2))
+        if is_inside(obj.np_triangles, c.as_numpy()):
+            self.material = 1
 
     def split(self):
         """Podziel węzeł na osiem"""

@@ -1,13 +1,17 @@
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import numpy as np
 
 
 def get_grid(root, condition, object=None):
-    if root and root.can_be_split(condition, object):
-        root.split()
+    if root:
+        if root.can_be_split(condition, object):
+            root.split()
 
-        for child in root.branches:
-            get_grid(child, condition, object)
+            for child in root.branches:
+                get_grid(child, condition, object)
+        else:
+            root.determine_material(object)
 
 
 def show_octree(root, stl=None):
@@ -41,3 +45,18 @@ def draw_edge(p1, p2, ax, color='gray'):
     ys = [p1.y, p2.y]
     zs = [p1.z, p2.z]
     ax.plot3D(xs, ys, zs, color)
+
+
+def is_inside(triangles, X):
+    # Compute triangle vertices and their norms relative to X
+    M = triangles - X
+    M_norm = np.sqrt(np.sum(M ** 2, axis=2))
+
+    # Accumulate generalized winding number per triangle
+    winding_number = 0.
+    for (A, B, C), (a, b, c) in zip(M, M_norm):
+        winding_number += np.arctan2(np.linalg.det(np.array([A, B, C])),
+                                        (a * b * c) + c * np.dot(A, B) + a * np.dot(B, C) + b * np.dot(C, A))
+
+    # Job done
+    return winding_number >= 2. * np.pi
