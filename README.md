@@ -1,4 +1,4 @@
-# Cctree
+# Octree
 Generator siatek prostopadłościennych z wykorzystaniem drzewa ósemkowego
 
 ## Jak to działa?
