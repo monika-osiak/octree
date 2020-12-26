@@ -37,6 +37,16 @@ def get_grid(root, condition, object=None):
     return root.percentage
 
 
+def get_array(root, array):
+    if root:
+        array = np.append(array, root.percentage)
+
+        for child in root.branches:
+            array = get_array(child, array)
+
+    return array
+
+
 def show_octree(root, stl=None):
     print('> Show the full octree...')
     fig = plt.figure()

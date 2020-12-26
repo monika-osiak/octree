@@ -2,6 +2,7 @@ import argparse
 import configparser
 
 from models import Node, STL, Point, Vector
+from numpy import array
 from functions import *
 
 
@@ -37,6 +38,9 @@ if __name__ == '__main__':
     print('> Generate octree...')
     root = Node(start_point, dimensions)
     get_grid(root, condition=condition, object=stl)
-    print_preorder(root)
+    arr = array([], dtype=float)
+    arr = get_array(root, arr)
+    # print_preorder(root)
+    # print(arr)
     # show_octree(root, stl)  # pokaż całe octree
-    show_object_octree(root, stl)  # pokaż tylko węzły należące do obiektu
+    # show_object_octree(root, stl)  # pokaż tylko węzły należące do obiektu
