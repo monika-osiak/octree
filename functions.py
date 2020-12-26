@@ -3,15 +3,38 @@ from tqdm import tqdm
 import numpy as np
 
 
+def print_preorder(root, i=0, prefix="", last=True):
+    if root:
+        chars = {
+            'mid': '├',
+            'term': '└',
+            'skip': '│',
+            'dash': '─',
+            'point': ' ' + str(root.percentage),
+        }
+
+        char = chars['term'] if last else chars['mid']
+        new_prefix = (prefix + "    ") if last else (prefix + chars['skip'] + "   ")
+
+        print(prefix + char + chars['dash'] * 2 + chars['point'])
+
+        for i in range(8):
+            status = True if i == 7 else False
+            print_preorder(root.branches[i], i, new_prefix, status)
+
+
 def get_grid(root, condition, object=None):
     if root:
         if root.can_be_split(condition, object):
             root.split()
 
             for child in root.branches:
-                get_grid(child, condition, object)
+                root.percentage += get_grid(child, condition, object) / 8
         else:
             root.determine_material(object)
+            root.percentage = root.material
+            return root.percentage
+    return root.percentage
 
 
 def show_octree(root, stl=None):

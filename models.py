@@ -24,6 +24,7 @@ class Node:
         self.is_leaf = True  # kazdy węzeł na początku jest liściem
         self.branches = [None] * 8
         self.material = 0  # kazdy wezel domyslnie nalezy do tla
+        self.percentage = 0
 
     def determine_material(self, obj):
         c = self.start.move(Vector(self.dim.x / 2, self.dim.y / 2, self.dim.z / 2))

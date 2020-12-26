@@ -37,5 +37,6 @@ if __name__ == '__main__':
     print('> Generate octree...')
     root = Node(start_point, dimensions)
     get_grid(root, condition=condition, object=stl)
-    show_octree(root, stl)  # pokaż całe octree
-    # show_object_octree(root, stl)  # pokaż tylko węzły należące do obiektu
+    print_preorder(root)
+    # show_octree(root, stl)  # pokaż całe octree
+    show_object_octree(root, stl)  # pokaż tylko węzły należące do obiektu
