@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import numpy as np
+import json
 
 
 def print_preorder(root, i=0, prefix="", last=True):
@@ -122,3 +123,34 @@ def is_inside(triangles, X):
 
     # Job done
     return winding_number >= 2. * np.pi
+
+
+def save_to_json(root, filename):
+    data = {}
+    print('> Generate json data...')
+    data['nodes'] = save_node_to_json(root, [])
+
+    with open(filename, 'w') as outfile:
+        print('> Save data to json file...')
+        json.dump(data, outfile)
+
+
+def save_node_to_json(node, array):
+    if node:
+        if node.is_leaf:
+            d = {
+                'x': node.start.x,
+                'y': node.start.y,
+                'z': node.start.z,
+                'dx': node.dim.x,
+                'dy': node.dim.y,
+                'dz': node.dim.z,
+                'material': node.material
+            }
+            array.append(d)
+
+        else:
+            for child in node.branches:
+                array = save_node_to_json(child, array)
+
+    return array
