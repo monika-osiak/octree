@@ -13,13 +13,13 @@ $ source venv/bin/activate
 ```
 ### Przykład z kostką
 ```
-(venv) $ python main.py --config config/config_cube.ini
+(venv) $ python main.py --config config/cube.ini
 ```
 ### Przykład z donutem
 ```
-(venv) $ python main.py --config config/config_element.ini
+(venv) $ python main.py --config config/element.ini
 ```
 ### Przykład z liskiem
 ```
-(venv) $ python main.py --config config/config_fox.ini
+(venv) $ python main.py --config config/fox.ini
 ```
